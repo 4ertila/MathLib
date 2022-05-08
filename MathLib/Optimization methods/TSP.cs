@@ -118,14 +118,14 @@ namespace MathLib.OptimizationMethods
                 
                 Matrix C2 = new Matrix(C.DeleteRow(u).DeleteColumn(v));
                 double sum1, sum2;
-                sum1 = SumSubstractMin(C2);
+                sum2 = SumSubstractMin(C2);
                 C1[u, v] = double.PositiveInfinity;
-                sum2 = SumSubstractMin(C1);
+                sum1 = SumSubstractMin(C1);
                 if (sum1 <= sum2)
                 {
                     restrictions.Add(new Step(u, v, true));
                     tValue = Solve(C2, restrictions, U.DeleteElement(u), V.DeleteElement(v), n);
-                    if (tValue.Equals(double.NaN) || sum2 < tValue)
+                    if (tValue.Equals(double.NaN) || sum1 < tValue)
                     {
                         restrictions[restrictions.Count - 1] = new Step(u, v, false);
                         return Solve(C1, restrictions, U, V, n);
@@ -139,7 +139,7 @@ namespace MathLib.OptimizationMethods
                 {
                     restrictions.Add(new Step(u, v, false));
                     tValue = Solve(C1, restrictions, U, V, n);
-                    if (tValue.Equals(double.NaN) || sum1 < tValue)
+                    if (tValue.Equals(double.NaN) || sum2 < tValue)
                     {
                         restrictions[restrictions.Count - 1] = new Step(u, v, true);
                         return Solve(C2, restrictions, U.DeleteElement(u), V.DeleteElement(v), n);
@@ -152,10 +152,21 @@ namespace MathLib.OptimizationMethods
             }
             else
             {
-                int currentPos = 0;
-                int[] path = new int[n];
-                path[0] = 0;
-                
+                restrictions.Add(new Step((int)U[0], (int)V[0], true));
+                restrictions.Add(new Step((int)U[1], (int)V[1], true));
+                double[] tArr = new double[n];
+                for(int i = 0; i < restrictions.Count; i++)
+                {
+                    tArr[restrictions[i].v]++;
+                }
+                tArr[restrictions[0].u]++;
+                for (int i = 0; i < n; i++)
+                {
+                    if(tArr[i] == 0)
+                    {
+                        return double.NaN;
+                    }
+                }
                 return double.NaN;
             }
         }

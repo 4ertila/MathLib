@@ -11,174 +11,405 @@ namespace MathLib.Аpproximation
 {
     public abstract class SplineInterpolation : Approximation
     {
-        public static double[,] Approximate(double[] x, Function f)
-        {
-            int n = x.Length;
-            double[] y = new double[n];
-            for(int i = 0; i < n; i++)
-            {
-                y[i] = f(x[i]);
-            }
-            double h = x[1] - x[0];
-            double[,] M = new double[n - 1, n];
-            double[] b = new double[n - 1];
-            for (int i = 1; i < n - 2; i++)
-            {
-                M[i, i - 1] = h / 6;
-                M[i, i] = (x[i + 1] - x[i - 1]) / 3;
-                M[i, i + 1] = h / 6;
-            }
-            for (int i = 1; i < n - 1; i++)
-            {
-                b[i - 1] = (y[i + 1] - y[i]) / h -
-                           (y[i] - y[i - 1]) / h;
-            }
-            b[n - 2] = (y[n - 1] - y[n - 2]) / h -
-                           (y[n - 2] - y[n - 3]) / h;
-            M[0, 0] = M[n - 2, n - 2] = h * 2 / 3;
-            M[0, 1] = M[n - 2, n - 3] = h / 6;
-
-            double[] S = new double[n];
-            Array.Copy(SweepMethod.Solve(M, b), S, n - 1);
-            S[n - 1] = 0;
-            double[,] A = new double[n - 1, 4];
-            double k0, k1, k2, k3;
-            for (int i = 0; i < n - 1; i++)
-            {
-                k0 = -S[i] / (6 * h);
-                k1 = S[i + 1] / (6 * h);
-                k2 = (y[i + 1] - y[i]) / h - h * (S[i + 1] - S[i]) / 6;
-                k3 = y[i] - S[i] * Pow(h, 2) / 6;
-
-                A[i, 3] = k0 + k1;
-                A[i, 2] = -3 * x[i + 1] * k0 - 3 * x[i] * k1;
-                A[i, 1] = 3 * Pow(x[i + 1], 2) * k0 + 3 * Pow(x[i], 2) * k1 + k2;
-                A[i, 0] = -k0 * Pow(x[i + 1], 3) - k1 * Pow(x[i], 3) - k2 * x[i] + k3;
-            }
-
-            return A;
-        }
-        public static double[,] Approximate1(double[] x, double[] y)
-        {
-            int n = x.Length;
-            double h = x[1] - x[0];
-            double[,] M = new double[n - 2, n - 2];
-            double[] b = new double[n - 1];
-            for (int i = 1; i < n - 3; i++)
-            {
-                M[i, i - 1] = h / 6;
-                M[i, i] = (x[i + 1] - x[i - 1]) / 3;
-                M[i, i + 1] = h / 6;
-            }
-            for (int i = 1; i < n - 2; i++)
-            {
-                b[i - 1] = (y[i + 1] - y[i]) / h -
-                           (y[i] - y[i - 1]) / h;
-            }
-            b[n - 2] = (y[n - 1] - y[n - 2]) / h -
-                           (y[n - 2] - y[n - 3]) / h;
-            M[n - 3, 0] = h / 6;
-            M[n - 3, 1] = h * 2 / 3;
-            M[0 ,0] = h * 2 / 3;
-            M[0, 1] = M[n - 3, n - 3] = h / 6;
-            for (int i = 0; i < n-2; i++)
-            {
-                for (int j = 0; j < n-2; j++)
-                {
-                    Console.Write(Round(M[i, j], 2) + " ");
-                }
-                Console.WriteLine();
-            }
-            double[] S = new double[n];
-            Array.Copy(GaussMethod.Solve(M, b), S, n - 2);
-            S[n - 1] = 0;
-            double[,] A = new double[n - 1, 4];
-            double k0, k1, k2, k3;
-            for (int i = 0; i < n - 1; i++)
-            {
-                k0 = -S[i] / (6 * h);
-                k1 = S[i + 1] / (6 * h);
-                k2 = (y[i + 1] - y[i]) / h - h * (S[i + 1] - S[i]) / 6;
-                k3 = y[i] - S[i] * Pow(h, 2) / 6;
-
-                A[i, 3] = k0 + k1;
-                A[i, 2] = -3 * x[i + 1] * k0 - 3 * x[i] * k1;
-                A[i, 1] = 3 * Pow(x[i + 1], 2) * k0 + 3 * Pow(x[i], 2) * k1 + k2;
-                A[i, 0] = -k0 * Pow(x[i + 1], 3) - k1 * Pow(x[i], 3) - k2 * x[i] + k3;
-            }
-
-            return A;
-        }
-        public static double[,] Approximate(double[] x, double[] y)
-        {
-            int n = x.Length;
-            double h = x[1] - x[0];
-            double[,] M = new double[n - 1, n];
-            double[] b = new double[n - 1];
-            for (int i = 1; i < n - 2; i++)
-            {
-                M[i, i - 1] = h / 6;
-                M[i, i] = (x[i + 1] - x[i - 1]) / 3;
-                M[i, i + 1] = h / 6;
-            }
-            for (int i = 1; i < n - 1; i++)
-            {
-                b[i - 1] = (y[i + 1] - y[i]) / h -
-                           (y[i] - y[i - 1]) / h;
-            }
-            b[n - 2] = (y[n - 1] - y[n - 2]) / h -
-                           (y[n - 2] - y[n - 3]) / h;
-            M[0, 0] = M[n - 2, n - 2] = h * 2 / 3;
-            M[0, 1] = M[n - 2, n - 3] = h / 6;
-
-            double[] S = new double[n];
-            Array.Copy(SweepMethod.Solve(M, b), S, n - 1);
-            S[n - 1] = 0;
-            double[,] A = new double[n - 1, 4];
-            double k0, k1, k2, k3;
-            for(int i = 0; i < n - 1; i++)
-            {
-                k0 = -S[i] / (6 * h);
-                k1 = S[i + 1] / (6 * h);
-                k2 = (y[i + 1] - y[i]) / h - h * (S[i + 1] - S[i]) / 6;
-                k3 = y[i] - S[i] * Pow(h, 2) / 6;
-
-                A[i, 3] = k0 + k1;
-                A[i, 2] = -3 * x[i + 1] * k0 - 3 * x[i] * k1;
-                A[i, 1] = 3 * Pow(x[i + 1], 2) * k0 + 3 * Pow(x[i], 2) * k1 + k2;
-                A[i, 0] = -k0 * Pow(x[i + 1], 3) - k1 * Pow(x[i], 3) - k2 * x[i] + k3;
-            }
-
-            return A;
-        }
-
         public abstract class Type1
         {
             public static double[,] Approximate(double[] x, double[] y)
             {
                 int n = x.Length;
-                Matrix M = new Matrix(n - 2, n - 2);
-                Vector b = new Vector(n - 2);
-                for(int i = 1; i < n - 1; i++)
+                double[,] M = new double[n - 1, n - 1];
+                double[] b = new double[n - 1];
+                for (int i = 1; i < n - 2; i++)
                 {
                     M[i, i - 1] = (x[i] - x[i - 1]) / 6;
                     M[i, i] = (x[i + 1] - x[i - 1]) / 3;
                     M[i, i + 1] = (x[i + 1] - x[i]) / 6;
+                }
+                for (int i = 1; i < n - 1; i++)
+                {
+                    b[i - 1] = (y[i + 1] - y[i]) / (x[i + 1] - x[i]) -
+                               (y[i] - y[i - 1]) / (x[i] - x[i - 1]);
+                }
+                b[n - 2] = (y[1] - y[n - 1]) / (x[1] - x[0]) -
+                           (y[n - 1] - y[n - 2]) / (x[n - 1] - x[n - 2]);
 
+                M[0, 0] = (x[2] - x[0]) / 3;
+                M[0, 1] = (x[2] - x[1]) / 6;
+                M[0, n - 2] = (x[1] - x[0]) / 6;
+                M[n - 2, n - 3] = (x[n - 2] - x[n - 3]) / 6;
+                M[n - 2, n - 2] = (x[n - 1] - x[n - 3]) / 3;
+                M[n - 2, 0] = (x[1] - x[0]) / 6;
+
+                double[] s = new double[n];
+                double[] tArr = GaussMethod.Solve(M, b);
+                for (int i = 0; i < tArr.Length; i++)
+                {
+                    s[i + 1] = tArr[i];
+                }
+                s[0] = s[n - 1];
+
+                double[,] R = new double[n - 1, 4];
+                double k0, k1, k2, k3;
+                double h;
+                for (int i = 0; i < n - 1; i++)
+                {
+                    h = x[i + 1] - x[i];
+
+                    k0 = -s[i] / (6 * h);
+                    k1 = s[i + 1] / (6 * h);
+                    k2 = (y[i + 1] - y[i]) / h - h * (s[i + 1] - s[i]) / 6;
+                    k3 = y[i] - s[i] * Pow(h, 2) / 6;
+
+                    R[i, 3] = k0 + k1;
+                    R[i, 2] = -3 * x[i + 1] * k0 - 3 * x[i] * k1;
+                    R[i, 1] = 3 * Pow(x[i + 1], 2) * k0 + 3 * Pow(x[i], 2) * k1 + k2;
+                    R[i, 0] = -k0 * Pow(x[i + 1], 3) - k1 * Pow(x[i], 3) - k2 * x[i] + k3;
+                }
+
+                return R;
+            }
+        }
+
+        public abstract class Type2
+        {
+            public static double[,] Approximate(double[] x, Function f, double A, double B)
+            {
+                int n = x.Length;
+                double[] y = new double[n];
+                for(int i = 0; i < n; i++)
+                {
+                    y[i] = f(x[i]);
+                }
+                double[,] M = new double[n - 2, n - 2];
+                double[] b = new double[n - 2];
+                for (int i = 1; i < n - 3; i++)
+                {
+                    M[i, i - 1] = (x[i] - x[i - 1]) / 6;
+                    M[i, i] = (x[i + 1] - x[i - 1]) / 3;
+                    M[i, i + 1] = (x[i + 1] - x[i]) / 6;
+                }
+                for (int i = 1; i < n - 1; i++)
+                {
+                    b[i - 1] = (y[i + 1] - y[i]) / (x[i + 1] - x[i]) -
+                               (y[i] - y[i - 1]) / (x[i] - x[i - 1]);
+                }
+                b[0] -= 3 * ((y[1] - y[0]) / (x[1] - x[0]) - A) / (x[1] - x[0]);
+                b[n - 3] -= 3 * (B - (y[n - 1] - y[n - 2]) / (x[n - 1] - x[n - 2])) / (x[n - 1] - x[n - 2]);
+
+                M[0, 0] = (x[2] - x[0]) / 3 - 1 / 2;
+                M[0, 1] = (x[2] - x[1]) / 6;
+                M[n - 3, n - 4] = (x[n - 2] - x[n - 3]) / 6;
+                M[n - 3, n - 3] = (x[n - 1] - x[n - 3]) / 3 - 1 / 2;
+
+                double[] s = new double[n];
+                double[] tArr = SweepMethod.Solve(M, b);
+                for (int i = 0; i < tArr.Length; i++)
+                {
+                    s[i + 1] = tArr[i];
+                }
+                s[0] = 3 * ((y[1] - y[0]) / (x[1] - x[0]) - A) / (x[1] - x[0]) - s[1] / 2;
+                s[n - 1] = 3 * (B - (y[n - 1] - y[n - 2]) / (x[n - 1] - x[n - 2])) / (x[n - 1] - x[n - 2]) - s[n - 2] / 2;
+
+                double[,] R = new double[n - 1, 4];
+                double k0, k1, k2, k3;
+                double h;
+                for (int i = 0; i < n - 1; i++)
+                {
+                    h = x[i + 1] - x[i];
+
+                    k0 = -s[i] / (6 * h);
+                    k1 = s[i + 1] / (6 * h);
+                    k2 = (y[i + 1] - y[i]) / h - h * (s[i + 1] - s[i]) / 6;
+                    k3 = y[i] - s[i] * Pow(h, 2) / 6;
+
+                    R[i, 3] = k0 + k1;
+                    R[i, 2] = -3 * x[i + 1] * k0 - 3 * x[i] * k1;
+                    R[i, 1] = 3 * Pow(x[i + 1], 2) * k0 + 3 * Pow(x[i], 2) * k1 + k2;
+                    R[i, 0] = -k0 * Pow(x[i + 1], 3) - k1 * Pow(x[i], 3) - k2 * x[i] + k3;
+                }
+
+                return R;
+            }
+
+            public static double[,] Approximate(double[] x, double[] y, double A, double B)
+            {
+                int n = x.Length;
+                double[,] M = new double[n - 2, n - 2];
+                double[] b = new double[n - 2];
+                for (int i = 1; i < n - 3; i++)
+                {
+                    M[i, i - 1] = (x[i] - x[i - 1]) / 6;
+                    M[i, i] = (x[i + 1] - x[i - 1]) / 3;
+                    M[i, i + 1] = (x[i + 1] - x[i]) / 6;
+                }
+                for (int i = 1; i < n - 1; i++)
+                {
+                    b[i - 1] = (y[i + 1] - y[i]) / (x[i + 1] - x[i]) -
+                               (y[i] - y[i - 1]) / (x[i] - x[i - 1]);
+                }
+                b[0] -= 3 * ((y[1] - y[0]) / (x[1] - x[0]) - A) / (x[1] - x[0]);
+                b[n - 3] -= 3 * (B - (y[n - 1] - y[n - 2]) / (x[n - 1] - x[n - 2])) / (x[n - 1] - x[n - 2]);
+
+                M[0, 0] = (x[2] - x[0]) / 3 - 1 / 2;
+                M[0, 1] = (x[2] - x[1]) / 6;
+                M[n - 3, n - 4] = (x[n - 2] - x[n - 3]) / 6;
+                M[n - 3, n - 3] = (x[n - 1] - x[n - 3]) / 3 - 1 / 2;
+
+                double[] s = new double[n];
+                double[] tArr = SweepMethod.Solve(M, b);
+                for (int i = 0; i < tArr.Length; i++)
+                {
+                    s[i + 1] = tArr[i];
+                }
+                s[0] = 3 * ((y[1] - y[0]) / (x[1] - x[0]) - A) / (x[1] - x[0]) - s[1] / 2;
+                s[n - 1] = 3 * (B - (y[n - 1] - y[n - 2]) / (x[n - 1] - x[n - 2])) / (x[n - 1] - x[n - 2]) - s[n - 2] / 2;
+
+                double[,] R = new double[n - 1, 4];
+                double k0, k1, k2, k3;
+                double h;
+                for (int i = 0; i < n - 1; i++)
+                {
+                    h = x[i + 1] - x[i];
+
+                    k0 = -s[i] / (6 * h);
+                    k1 = s[i + 1] / (6 * h);
+                    k2 = (y[i + 1] - y[i]) / h - h * (s[i + 1] - s[i]) / 6;
+                    k3 = y[i] - s[i] * Pow(h, 2) / 6;
+
+                    R[i, 3] = k0 + k1;
+                    R[i, 2] = -3 * x[i + 1] * k0 - 3 * x[i] * k1;
+                    R[i, 1] = 3 * Pow(x[i + 1], 2) * k0 + 3 * Pow(x[i], 2) * k1 + k2;
+                    R[i, 0] = -k0 * Pow(x[i + 1], 3) - k1 * Pow(x[i], 3) - k2 * x[i] + k3;
+                }
+
+                return R;
+            }
+        }
+
+        public abstract class Type3
+        {
+            public static double[,] Approximate(double[] x, Function f, double A, double B)
+            {
+                int n = x.Length;
+                double[] y = new double[n];
+                for (int i = 0; i < n; i++)
+                {
+                    y[i] = f(x[i]);
+                }
+                double[,] M = new double[n - 2, n - 2];
+                double[] b = new double[n - 2];
+                for (int i = 1; i < n - 3; i++)
+                {
+                    M[i, i - 1] = (x[i] - x[i - 1]) / 6;
+                    M[i, i] = (x[i + 1] - x[i - 1]) / 3;
+                    M[i, i + 1] = (x[i + 1] - x[i]) / 6;
+                }
+                for (int i = 1; i < n - 1; i++)
+                {
+                    b[i - 1] = (y[i + 1] - y[i]) / (x[i + 1] - x[i]) -
+                               (y[i] - y[i - 1]) / (x[i] - x[i - 1]);
+                }
+                b[0] -= A * (x[1] - x[0]) / 6;
+                b[n - 3] -= B * (x[n - 1] - x[n - 2]) / 6;
+
+                M[0, 0] = (x[2] - x[0]) / 3;
+                M[0, 1] = (x[2] - x[1]) / 6;
+                M[n - 3, n - 4] = (x[n - 2] - x[n - 3]) / 6;
+                M[n - 3, n - 3] = (x[n - 1] - x[n - 3]) / 3;
+
+                double[] s = new double[n];
+                double[] tArr = SweepMethod.Solve(M, b);
+                for (int i = 0; i < tArr.Length; i++)
+                {
+                    s[i + 1] = tArr[i];
+                }
+                s[0] = A;
+                s[n - 1] = B;
+
+                double[,] R = new double[n - 1, 4];
+                double k0, k1, k2, k3;
+                double h;
+                for (int i = 0; i < n - 1; i++)
+                {
+                    h = x[i + 1] - x[i];
+
+                    k0 = -s[i] / (6 * h);
+                    k1 = s[i + 1] / (6 * h);
+                    k2 = (y[i + 1] - y[i]) / h - h * (s[i + 1] - s[i]) / 6;
+                    k3 = y[i] - s[i] * Pow(h, 2) / 6;
+
+                    R[i, 3] = k0 + k1;
+                    R[i, 2] = -3 * x[i + 1] * k0 - 3 * x[i] * k1;
+                    R[i, 1] = 3 * Pow(x[i + 1], 2) * k0 + 3 * Pow(x[i], 2) * k1 + k2;
+                    R[i, 0] = -k0 * Pow(x[i + 1], 3) - k1 * Pow(x[i], 3) - k2 * x[i] + k3;
+                }
+
+                return R;
+            }
+
+            public static double[,] Approximate(double[] x, double[] y, double A, double B)
+            {
+                int n = x.Length;
+                double[,] M = new double[n - 2, n - 2];
+                double[] b = new double[n - 2];
+                for (int i = 1; i < n - 3; i++)
+                {
+                    M[i, i - 1] = (x[i] - x[i - 1]) / 6;
+                    M[i, i] = (x[i + 1] - x[i - 1]) / 3;
+                    M[i, i + 1] = (x[i + 1] - x[i]) / 6;
+                }
+                for (int i = 1; i < n - 1; i++)
+                {
+                    b[i - 1] = (y[i + 1] - y[i]) / (x[i + 1] - x[i]) -
+                               (y[i] - y[i - 1]) / (x[i] - x[i - 1]);
+                }
+                b[0] -= A * (x[1] - x[0]) / 6;
+                b[n - 3] -= B * (x[n - 1] - x[n - 2]) / 6;
+
+                M[0, 0] = (x[2] - x[0]) / 3;
+                M[0, 1] = (x[2] - x[1]) / 6;
+                M[n - 3, n - 4] = (x[n - 2] - x[n - 3]) / 6;
+                M[n - 3, n - 3] = (x[n - 1] - x[n - 3]) / 3;
+
+                double[] s = new double[n];
+                double[] tArr = SweepMethod.Solve(M, b);
+                for (int i = 0; i < tArr.Length; i++)
+                {
+                    s[i + 1] = tArr[i];
+                }
+                s[0] = A;
+                s[n - 1] = B;
+
+                double[,] R = new double[n - 1, 4];
+                double k0, k1, k2, k3;
+                double h;
+                for (int i = 0; i < n - 1; i++)
+                {
+                    h = x[i + 1] - x[i];
+
+                    k0 = -s[i] / (6 * h);
+                    k1 = s[i + 1] / (6 * h);
+                    k2 = (y[i + 1] - y[i]) / h - h * (s[i + 1] - s[i]) / 6;
+                    k3 = y[i] - s[i] * Pow(h, 2) / 6;
+
+                    R[i, 3] = k0 + k1;
+                    R[i, 2] = -3 * x[i + 1] * k0 - 3 * x[i] * k1;
+                    R[i, 1] = 3 * Pow(x[i + 1], 2) * k0 + 3 * Pow(x[i], 2) * k1 + k2;
+                    R[i, 0] = -k0 * Pow(x[i + 1], 3) - k1 * Pow(x[i], 3) - k2 * x[i] + k3;
+                }
+
+                return R;
+            }
+        }
+
+        public abstract class Type4
+        {
+            public static double[,] Approximate(double[] x, Function f)
+            {
+                int n = x.Length;
+                double[] y = new double[n];
+                for(int i = 0; i < n; i++)
+                {
+                    y[i] = f(x[i]);
+                }
+                double[,] M = new double[n - 2, n - 2];
+                double[] b = new double[n - 2];
+                for (int i = 1; i < n - 3; i++)
+                {
+                    M[i, i - 1] = (x[i] - x[i - 1]) / 6;
+                    M[i, i] = (x[i + 1] - x[i - 1]) / 3;
+                    M[i, i + 1] = (x[i + 1] - x[i]) / 6;
+                }
+                for (int i = 1; i < n - 1; i++)
+                {
                     b[i - 1] = (y[i + 1] - y[i]) / (x[i + 1] - x[i]) -
                                (y[i] - y[i - 1]) / (x[i] - x[i - 1]);
                 }
 
-                for(int i = 0; i < M.Rows; i++)
+                M[0, 0] = (x[2] - x[0]) / 3 + 1 + (x[1] - x[0]) / (x[2] - x[1]);
+                M[0, 1] = (x[2] - x[1]) / 6 - (x[1] - x[0]) / (x[2] - x[1]);
+                M[n - 3, n - 4] = (x[n - 2] - x[n - 3]) / 6 - (x[n - 1] - x[n - 2]) / (x[n - 2] - x[n - 3]);
+                M[n - 3, n - 3] = (x[n - 1] - x[n - 3]) / 3 + 1 + (x[n - 1] - x[n - 2]) / (x[n - 2] - x[n - 3]);
+
+                double[] s = new double[n];
+                double[] tArr = SweepMethod.Solve(M, b);
+                for (int i = 0; i < tArr.Length; i++)
                 {
-                    for(int j = 0; j < M.Columns; j++)
-                    {
-                        Console.Write($"{Math.Round(M[i, j], 2)} ");
-                    }
-                    Console.Write($"| {b[i]} ");
-                    Console.WriteLine();
+                    s[i + 1] = tArr[i];
                 }
-                return null;
+                s[0] = (1 + (x[1] - x[0]) / (x[2] - x[1])) * s[1] - (x[1] - x[0]) / (x[2] - x[1]) * s[2];
+                s[n - 1] = (1 + (x[n - 1] - x[n - 2]) / (x[n - 2] - x[n - 3])) * s[n - 2] - (x[n - 1] - x[n - 2]) / (x[n - 2] - x[n - 3]) * s[n - 3];
+
+                double[,] R = new double[n - 1, 4];
+                double k0, k1, k2, k3;
+                double h;
+                for (int i = 0; i < n - 1; i++)
+                {
+                    h = x[i + 1] - x[i];
+
+                    k0 = -s[i] / (6 * h);
+                    k1 = s[i + 1] / (6 * h);
+                    k2 = (y[i + 1] - y[i]) / h - h * (s[i + 1] - s[i]) / 6;
+                    k3 = y[i] - s[i] * Pow(h, 2) / 6;
+
+                    R[i, 3] = k0 + k1;
+                    R[i, 2] = -3 * x[i + 1] * k0 - 3 * x[i] * k1;
+                    R[i, 1] = 3 * Pow(x[i + 1], 2) * k0 + 3 * Pow(x[i], 2) * k1 + k2;
+                    R[i, 0] = -k0 * Pow(x[i + 1], 3) - k1 * Pow(x[i], 3) - k2 * x[i] + k3;
+                }
+
+                return R;
+            }
+
+            public static double[,] Approximate(double[] x, double[] y)
+            {
+                int n = x.Length;
+                double[,] M = new double[n - 2, n - 2];
+                double[] b = new double[n - 2];
+                for (int i = 1; i < n - 3; i++)
+                {
+                    M[i, i - 1] = (x[i] - x[i - 1]) / 6;
+                    M[i, i] = (x[i + 1] - x[i - 1]) / 3;
+                    M[i, i + 1] = (x[i + 1] - x[i]) / 6;
+                }
+                for (int i = 1; i < n - 1; i++)
+                {
+                    b[i - 1] = (y[i + 1] - y[i]) / (x[i + 1] - x[i]) -
+                               (y[i] - y[i - 1]) / (x[i] - x[i - 1]);
+                }
+
+                M[0, 0] = (x[2] - x[0]) / 3 + 1 + (x[1] - x[0]) / (x[2] - x[1]);
+                M[0, 1] = (x[2] - x[1]) / 6 - (x[1] - x[0]) / (x[2] - x[1]);
+                M[n - 3, n - 4] = (x[n - 2] - x[n - 3]) / 6 - (x[n - 1] - x[n - 2]) / (x[n - 2] - x[n - 3]);
+                M[n - 3, n - 3] = (x[n - 1] - x[n - 3]) / 3 + 1 + (x[n - 1] - x[n - 2]) / (x[n - 2] - x[n - 3]);
+
+                double[] s = new double[n];
+                double[] tArr = SweepMethod.Solve(M, b);
+                for (int i = 0; i < tArr.Length; i++)
+                {
+                    s[i + 1] = tArr[i];
+                }
+                s[0] = (1 + (x[1] - x[0]) / (x[2] - x[1])) * s[1] - (x[1] - x[0]) / (x[2] - x[1]) * s[2];
+                s[n - 1] = (1 + (x[n - 1] - x[n - 2]) / (x[n - 2] - x[n - 3])) * s[n - 2] - (x[n - 1] - x[n - 2]) / (x[n - 2] - x[n - 3]) * s[n - 3];
+
+                double[,] R = new double[n - 1, 4];
+                double k0, k1, k2, k3;
+                double h;
+                for (int i = 0; i < n - 1; i++)
+                {
+                    h = x[i + 1] - x[i];
+
+                    k0 = -s[i] / (6 * h);
+                    k1 = s[i + 1] / (6 * h);
+                    k2 = (y[i + 1] - y[i]) / h - h * (s[i + 1] - s[i]) / 6;
+                    k3 = y[i] - s[i] * Pow(h, 2) / 6;
+
+                    R[i, 3] = k0 + k1;
+                    R[i, 2] = -3 * x[i + 1] * k0 - 3 * x[i] * k1;
+                    R[i, 1] = 3 * Pow(x[i + 1], 2) * k0 + 3 * Pow(x[i], 2) * k1 + k2;
+                    R[i, 0] = -k0 * Pow(x[i + 1], 3) - k1 * Pow(x[i], 3) - k2 * x[i] + k3;
+                }
+
+                return R;
             }
         }
     }

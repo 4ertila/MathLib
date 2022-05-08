@@ -17,17 +17,17 @@ namespace MathLib.Аpproximation
             double[] tArr = new double[0];
             double tValue = 0;
             Array.Copy(y, f, n);
-            a[0] += f[0];
             int i = 0;
 
             do
             {
-                for (int k = 0; k <= i; k++)
+                for (int k = 0; k < i; k++)
                 {
                     tValue = 0;
                     Combinations(ref tValue, i - k, tArr);
                     a[k] += tValue * f[0];
                 }
+                a[i] += f[0];
                 tArr = tArr.Append(x[i]).ToArray();
 
                 fPrev = f;
@@ -58,17 +58,17 @@ namespace MathLib.Аpproximation
             {
                 f[j] = y(x[j]);
             }
-            a[0] += f[0];
             int i = 0;
 
             do
             {
-                for (int k = 0; k <= i; k++)
+                for (int k = 0; k < i; k++)
                 {
                     tValue = 0;
                     Combinations(ref tValue, i - k, tArr);
                     a[k] += tValue * f[0];
                 }
+                a[i] += f[0];
                 tArr = tArr.Append(x[i]).ToArray();
 
                 fPrev = f;
