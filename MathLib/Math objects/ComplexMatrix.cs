@@ -9,30 +9,14 @@ namespace MathLib.Objects
     public class ComplexMatrix
     {
         private ComplexNumber[,] values;
-        private int columns;
-        private int rows;
-
-        public int Rows
-        {
-            get
-            {
-                return rows;
-            }
-        }
-
-        public int Columns
-        {
-            get
-            {
-                return columns;
-            }
-        }
+        public int columns { private set; get; }
+        public int rows { private set; get; }
 
         public ComplexNumber this[int i, int j]
         {
             get
             {
-                return values[i, j];
+                return new ComplexNumber(values[i, j]);
             }
             set
             {
@@ -46,7 +30,6 @@ namespace MathLib.Objects
             columns = 0;
             rows = 0;
         }
-
         public ComplexMatrix(int rows, int columns)
         {
             this.rows = rows;
@@ -60,7 +43,6 @@ namespace MathLib.Objects
                 }
             }
         }
-
         public ComplexMatrix(ComplexNumber[,] values)
         {
             rows = values.GetLength(0);
@@ -74,11 +56,10 @@ namespace MathLib.Objects
                 }
             }
         }
-
         public ComplexMatrix(ComplexMatrix matrix)
         {
-            rows = matrix.Rows;
-            columns = matrix.Columns;
+            rows = matrix.rows;
+            columns = matrix.columns;
             values = new ComplexNumber[rows, columns];
             for (int i = 0; i < rows; i++)
             {
@@ -88,11 +69,10 @@ namespace MathLib.Objects
                 }
             }
         }
-
         public ComplexMatrix(ComplexVector[] vectors)
         {
             rows = vectors.Length;
-            columns = vectors[0].Dim;
+            columns = vectors[0].dim;
             values = new ComplexNumber[rows, columns];
             for (int i = 0; i < rows; i++)
             {
@@ -110,12 +90,12 @@ namespace MathLib.Objects
                 return new ComplexMatrix(values);
             }
 
-            ComplexNumber[,] outMatrix = new ComplexNumber[vector.Dim, columns + 1];
+            ComplexNumber[,] outMatrix = new ComplexNumber[vector.dim, columns + 1];
             for (int i = 0, k = 0; i < columns + 1; i++)
             {
                 if (i == newMatrixId)
                 {
-                    for (int j = 0; j < vector.Dim; j++)
+                    for (int j = 0; j < vector.dim; j++)
                     {
                         outMatrix[j, i] = new ComplexNumber(vector[j]);
                     }
@@ -139,13 +119,13 @@ namespace MathLib.Objects
                 return new ComplexMatrix(values);
             }
 
-            ComplexNumber[,] outMatrix = new ComplexNumber[vector[0].Dim, columns + vector.Length];
+            ComplexNumber[,] outMatrix = new ComplexNumber[vector[0].dim, columns + vector.Length];
             for (int i = 0, k = 0; i < columns + vector.Length; i++)
             {
                 if (newMatrixId.Contains(i))
                 {
                     int id = Array.BinarySearch(newMatrixId, i);
-                    for (int j = 0; j < vector[0].Dim; j++)
+                    for (int j = 0; j < vector[0].dim; j++)
                     {
                         outMatrix[j, i] = new ComplexNumber(vector[id][j]);
                     }
@@ -161,7 +141,6 @@ namespace MathLib.Objects
             }
             return new ComplexMatrix(outMatrix);
         }
-
         public ComplexMatrix AddColumns(ComplexNumber[,] values, int[] newMatrixId)
         {
             if (values == null || newMatrixId == null)
@@ -199,12 +178,12 @@ namespace MathLib.Objects
                 return new ComplexMatrix(values);
             }
 
-            ComplexNumber[,] outMatrix = new ComplexNumber[rows + 1, vector.Dim];
+            ComplexNumber[,] outMatrix = new ComplexNumber[rows + 1, vector.dim];
             for (int i = 0, k = 0; i < rows + 1; i++)
             {
                 if (i == newMatrixId)
                 {
-                    for (int j = 0; j < vector.Dim; j++)
+                    for (int j = 0; j < vector.dim; j++)
                     {
                         outMatrix[i, j] = new ComplexNumber(vector[j]);
                     }
@@ -228,13 +207,13 @@ namespace MathLib.Objects
                 return new ComplexMatrix(values);
             }
 
-            ComplexNumber[,] outMatrix = new ComplexNumber[rows + vector.Length, vector[0].Dim];
+            ComplexNumber[,] outMatrix = new ComplexNumber[rows + vector.Length, vector[0].dim];
             for (int i = 0, k = 0; i < rows + vector.Length; i++)
             {
                 if (newMatrixId.Contains(i))
                 {
                     int id = Array.BinarySearch(newMatrixId, i);
-                    for (int j = 0; j < vector[0].Dim; j++)
+                    for (int j = 0; j < vector[0].dim; j++)
                     {
                         outMatrix[i, j] = new ComplexNumber(vector[j][id]);
                     }
@@ -250,7 +229,6 @@ namespace MathLib.Objects
             }
             return new ComplexMatrix(outMatrix);
         }
-
         public ComplexMatrix AddRows(ComplexNumber[,] values, int[] newMatrixId)
         {
             if (values == null || newMatrixId == null)
@@ -432,7 +410,7 @@ namespace MathLib.Objects
             {
                 for(int j = 0; j < columns; j++)
                 {
-                    outMatrix[i, j] = values[i, j].Re;
+                    outMatrix[i, j] = values[i, j].re;
                 }
             }
             return outMatrix;
@@ -445,7 +423,7 @@ namespace MathLib.Objects
             {
                 for (int j = 0; j < columns; j++)
                 {
-                    outMatrix[i, j] = values[i, j].Im;
+                    outMatrix[i, j] = values[i, j].im;
                 }
             }
             return outMatrix;
@@ -720,7 +698,6 @@ namespace MathLib.Objects
                 throw new ArgumentException("the number of columns of matrix 1 does not equal with the number of rows of matrix 2 ");
             }
         }
-
         public static ComplexMatrix operator *(ComplexMatrix matrix, ComplexNumber value)
         {
             ComplexNumber[,] outMatrix = new ComplexNumber[matrix.rows, matrix.columns];
@@ -733,7 +710,6 @@ namespace MathLib.Objects
             }
             return new ComplexMatrix(outMatrix);
         }
-
         public static ComplexMatrix operator *(ComplexNumber value, ComplexMatrix matrix)
         {
             ComplexNumber[,] outMatrix = new ComplexNumber[matrix.rows, matrix.columns];
@@ -746,7 +722,6 @@ namespace MathLib.Objects
             }
             return new ComplexMatrix(outMatrix);
         }
-
         public static ComplexMatrix operator *(ComplexMatrix matrix, int value)
         {
             ComplexNumber[,] outMatrix = new ComplexNumber[matrix.rows, matrix.columns];
@@ -759,7 +734,6 @@ namespace MathLib.Objects
             }
             return new ComplexMatrix(outMatrix);
         }
-
         public static ComplexMatrix operator *(int value, ComplexMatrix matrix)
         {
             ComplexNumber[,] outMatrix = new ComplexNumber[matrix.rows, matrix.columns];
@@ -772,10 +746,9 @@ namespace MathLib.Objects
             }
             return new ComplexMatrix(outMatrix);
         }
-
         public static ComplexVector operator *(ComplexMatrix matrix, ComplexVector vector)
         {
-            if (matrix.columns == vector.Dim)
+            if (matrix.columns == vector.dim)
             {
                 ComplexNumber[] outVector = new ComplexNumber[matrix.rows];
                 for (int i = 0; i < matrix.rows; i++)
@@ -793,10 +766,9 @@ namespace MathLib.Objects
                 throw new ArgumentException("The number of columns of matrix1 does not equal dimnesions of vector");
             }
         }
-
         public static ComplexVector operator *(ComplexVector vector, ComplexMatrix matrix)
         {
-            if (matrix.columns == vector.Dim && matrix.Rows == 1)
+            if (matrix.columns == vector.dim && matrix.rows == 1)
             {
                 ComplexNumber[] outVector = new ComplexNumber[matrix.rows];
                 for (int i = 0; i < matrix.rows; i++)

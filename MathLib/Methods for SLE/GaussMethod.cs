@@ -11,7 +11,7 @@ namespace MathLib.SolvingLinearSystem
     {
         public static ComplexVector ComplexSolve(ComplexMatrix A, ComplexVector b)
         {
-            int n = A.Rows;
+            int n = A.rows;
             Matrix reA = A.ReMatrix();
             Matrix imA = A.ImMatrix();
             Vector reB = b.ReVector();
@@ -45,8 +45,8 @@ namespace MathLib.SolvingLinearSystem
 
         public static ComplexVector GaussComplexSolve(ComplexMatrix coefComplexMatrix, ComplexVector freeComplexVector)
         {
-            int rows = coefComplexMatrix.Rows;
-            int columns = coefComplexMatrix.Columns;
+            int rows = coefComplexMatrix.rows;
+            int columns = coefComplexMatrix.columns;
             ComplexMatrix сComplexMatrix = new ComplexMatrix(coefComplexMatrix);
             ComplexVector fComplexVector = new ComplexVector(freeComplexVector);
             ComplexNumber tValue;
@@ -96,8 +96,8 @@ namespace MathLib.SolvingLinearSystem
 
         public static Vector Solve(Matrix coefMatrix, Vector freeVector)
         {
-            int rows = coefMatrix.Rows;
-            int columns = coefMatrix.Columns;
+            int rows = coefMatrix.rows;
+            int columns = coefMatrix.columns;
             Matrix сMatrix = new Matrix(coefMatrix);
             Vector fVector = new Vector(freeVector);
             double tValue;
@@ -208,16 +208,16 @@ namespace MathLib.SolvingLinearSystem
         {
             int rank = coefMatrix.Rank();
             //проверка на существование решения
-            if (rank == coefMatrix.AddColumn(freeVector, coefMatrix.Columns).Rank())
+            if (rank == coefMatrix.AddColumn(freeVector, coefMatrix.columns).Rank())
             {
-                int rows = coefMatrix.Rows;
-                int columns = coefMatrix.Columns;
+                int rows = coefMatrix.rows;
+                int columns = coefMatrix.columns;
 
                 //проверка единственности решения
                 if (rank < columns)
                 {
                     RationalNumber[,] сMatrix = new RationalNumber[rows, columns];
-                    RationalNumber[] fVector = new RationalNumber[freeVector.Dim];
+                    RationalNumber[] fVector = new RationalNumber[freeVector.dim];
                     RationalNumber[,] solutionVector = new RationalNumber[rows, columns - rank];
                     for (int i = 0; i < rows; i++)
                     {
@@ -282,7 +282,7 @@ namespace MathLib.SolvingLinearSystem
                 else
                 {
                     RationalNumber[,] сMatrix = new RationalNumber[rows, columns];
-                    RationalNumber[] fVector = new RationalNumber[freeVector.Dim];
+                    RationalNumber[] fVector = new RationalNumber[freeVector.dim];
                     RationalNumber[] solutionVector = new RationalNumber[columns];
                     for (int i = 0; i < rows; i++)
                     {

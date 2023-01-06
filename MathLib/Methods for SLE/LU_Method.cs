@@ -12,8 +12,8 @@ namespace MathLib.SolvingLinearSystem
         public static double Determinant(Matrix A)
         {
             double det = 1;
-            int rows = A.Rows;
-            int columns = A.Columns;
+            int rows = A.rows;
+            int columns = A.columns;
             Matrix L = new Matrix(rows, columns);
             Matrix U = new Matrix(rows, columns);
 
@@ -51,8 +51,8 @@ namespace MathLib.SolvingLinearSystem
 
         public static Vector Solve(Matrix A, Vector b)
         {
-            int rows = A.Rows;
-            int columns = A.Columns;
+            int rows = A.rows;
+            int columns = A.columns;
             Matrix L = new Matrix(rows, columns);
             Matrix U = new Matrix(rows, columns);
 

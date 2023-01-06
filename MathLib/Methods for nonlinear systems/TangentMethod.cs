@@ -9,27 +9,28 @@ namespace MathLib.SolvingNonlinearSystem
 {
     public abstract class TangentMethod
     {
-        public delegate double Function(Vector x);
-
-        public static Vector Solve(double eps, Function[] f, Function[,] dfdx)
+        public static Vector Solve(VectorFunction f, MatrixFunction jacobiMatrix, double eps)
         {
-            Matrix I = new Matrix(dfdx.GetLength(0), dfdx.GetLength(1));
-            Vector fVector = new Vector(f.Length);
-            Vector x = Vector.IdentityVector(I.Rows);
+            IEnumerable<KeyValuePair<string, double>> variables = f.Variables;
+            int variablesCount = variables.Count();
+            MatrixFunction I = new MatrixFunction(jacobiMatrix);
+            Vector x = Vector.IdentityVector(I.rows);
             Vector xPrev = new Vector();
+            Dictionary<string, double> variable_xPrev = new Dictionary<string, double>();
+            foreach(KeyValuePair<string, double> variable in variables)
+            {
+                variable_xPrev.Add(variable.Key, 0);
+            }
 
             do
             {
                 xPrev.Init(x);
-                for(int i = 0; i < I.Rows; i++)
+                foreach (var variable in variables.Select((value, i) => new { value, i }))
                 {
-                    for(int j = 0; j < I.Columns; j++)
-                    {
-                        I[i, j] = dfdx[i, j](xPrev);
-                    }
-                    fVector[i] = f[i](xPrev);
+                    variable_xPrev[variable.value.Key] = xPrev[variable.i];
                 }
-                x = xPrev - I.InverseMatrix() * fVector;
+
+                x = xPrev - I.Calculate(variable_xPrev).InverseMatrix() * f.Calculate(variable_xPrev);
             }
             while ((x - xPrev).Norm() >= eps);
 

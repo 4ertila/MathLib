@@ -11,25 +11,8 @@ namespace MathLib.Objects
     public class Matrix
     {
         private double[,] values;
-        private int columns = 0;
-        private int rows = 0;
-
-        public int Rows
-        {
-            get
-            {
-                return rows;
-            }
-            set { }
-        }
-
-        public int Columns
-        {
-            get
-            {
-                return columns;
-            }
-        }
+        public int columns { private set; get; } = 0;
+        public int rows { private set; get; } = 0;
 
         public double this[int i, int j]
         {
@@ -43,28 +26,24 @@ namespace MathLib.Objects
             }
         }
 
-
         public Matrix()
         {
             values = null;
             columns = 0;
             rows = 0;
         }
-
         public Matrix(int rows, int columns)
         {
             this.rows = rows;
             this.columns = columns;
             values = new double[rows, columns];
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < columns; j++)
-                {
-                    values[i, j] = new double();
-                }
-            }
         }
-
+        public Matrix(int dim)
+        {
+            rows = dim;
+            columns = dim;
+            values = new double[rows, columns];
+        }
         public Matrix(double[,] values)
         {
             rows = values.GetLength(0);
@@ -78,11 +57,10 @@ namespace MathLib.Objects
                 }
             }
         }
-
         public Matrix(Matrix matrix)
         {
-            rows = matrix.Rows;
-            columns = matrix.Columns;
+            rows = matrix.rows;
+            columns = matrix.columns;
             values = new double[rows, columns];
             for (int i = 0; i < rows; i++)
             {
@@ -92,11 +70,10 @@ namespace MathLib.Objects
                 }
             }
         }
-
         public Matrix(Vector[] vectors)
         {
             rows = vectors.Length;
-            columns = vectors[0].Dim;
+            columns = vectors[0].dim;
             values = new double[rows, columns];
             for (int i = 0; i < rows; i++)
             {
@@ -107,10 +84,11 @@ namespace MathLib.Objects
             }
         }
 
+
         public void Init(Matrix matrix)
         {
-            columns = matrix.Columns;
-            rows = matrix.Rows;
+            columns = matrix.columns;
+            rows = matrix.rows;
             values = new double[rows, columns];
             for(int i = 0; i < rows; i++)
             {
@@ -120,7 +98,6 @@ namespace MathLib.Objects
                 }
             }
         }
-
 
         public double Min(out int row, out int column)
         {
@@ -361,7 +338,7 @@ namespace MathLib.Objects
                 throw new ArgumentException("Vector is null");
             }
 
-            double[,] outMatrix = new double[vector.Dim, columns + 1];
+            double[,] outMatrix = new double[vector.dim, columns + 1];
             for (int i = 0; i < rows; i++)
             {
                 for (int j = 0; j < columns; j++)
@@ -373,7 +350,6 @@ namespace MathLib.Objects
 
             return new Matrix(outMatrix);
         }
-
         public Matrix AddColumn(Vector vector, int newMatrixId)
         {
             if (vector is null)
@@ -381,12 +357,12 @@ namespace MathLib.Objects
                 throw new ArgumentException("Vector is null");
             }
 
-            double[,] outMatrix = new double[vector.Dim, columns + 1];
+            double[,] outMatrix = new double[vector.dim, columns + 1];
             for (int i = 0, k = 0; i < columns + 1; i++)
             {
                 if (i == newMatrixId)
                 {
-                    for (int j = 0; j < vector.Dim; j++)
+                    for (int j = 0; j < vector.dim; j++)
                     {
                         outMatrix[j, i] = vector[j];
                     }
@@ -410,13 +386,13 @@ namespace MathLib.Objects
                 return new Matrix(values);
             }
 
-            double[,] outMatrix = new double[vector[0].Dim, columns + vector.Length];
+            double[,] outMatrix = new double[vector[0].dim, columns + vector.Length];
             for (int i = 0, k = 0; i < columns + vector.Length; i++)
             {
                 if (newMatrixId.Contains(i))
                 {
                     int id = Array.BinarySearch(newMatrixId, i);
-                    for (int j = 0; j < vector[0].Dim; j++)
+                    for (int j = 0; j < vector[0].dim; j++)
                     {
                         outMatrix[j, i] = vector[id][j];
                     }
@@ -432,7 +408,6 @@ namespace MathLib.Objects
             }
             return new Matrix(outMatrix);
         }
-
         public Matrix AddColumns(double[,] values, int[] newMatrixId)
         {
             if (values == null || newMatrixId == null)
@@ -553,7 +528,7 @@ namespace MathLib.Objects
                 throw new ArgumentException("Vector is null");
             }
 
-            double[,] outMatrix = new double[vector.Dim + 1, columns];
+            double[,] outMatrix = new double[vector.dim + 1, columns];
             for (int i = 0; i < columns; i++)
             {
                 for (int j = 0; j < rows; j++)
@@ -565,7 +540,6 @@ namespace MathLib.Objects
 
             return new Matrix(outMatrix);
         }
-
         public Matrix AddRow(Vector vector, int newMatrixId)
         {
             if (vector is null)
@@ -573,12 +547,12 @@ namespace MathLib.Objects
                 throw new ArgumentException("Vector is null");
             }
 
-            double[,] outMatrix = new double[rows + 1, vector.Dim];
+            double[,] outMatrix = new double[rows + 1, vector.dim];
             for (int i = 0, k = 0; i < rows + 1; i++)
             {
                 if (i == newMatrixId)
                 {
-                    for (int j = 0; j < vector.Dim; j++)
+                    for (int j = 0; j < vector.dim; j++)
                     {
                         outMatrix[i, j] = vector[j];
                     }
@@ -602,13 +576,13 @@ namespace MathLib.Objects
                 return new Matrix(values);
             }
 
-            double[,] outMatrix = new double[rows + vector.Length, vector[0].Dim];
+            double[,] outMatrix = new double[rows + vector.Length, vector[0].dim];
             for (int i = 0, k = 0; i < rows + vector.Length; i++)
             {
                 if (newMatrixId.Contains(i))
                 {
                     int id = Array.BinarySearch(newMatrixId, i);
-                    for (int j = 0; j < vector[0].Dim; j++)
+                    for (int j = 0; j < vector[0].dim; j++)
                     {
                         outMatrix[i, j] = vector[j][id];
                     }
@@ -624,7 +598,6 @@ namespace MathLib.Objects
             }
             return new Matrix(outMatrix);
         }
-
         public Matrix AddRows(double[,] values, int[] newMatrixId)
         {
             if (values == null || newMatrixId == null)
@@ -727,9 +700,10 @@ namespace MathLib.Objects
             return new Matrix(outMatrix);
         }
 
+
         public static void MaxEigenvalue(Matrix A, double eps, out double eigenvalue, out Vector eigenvector)
         {
-            int dim = A.Rows;
+            int dim = A.rows;
 
             Vector xPrev;
             Vector x = A.GetColumn(0);
@@ -798,7 +772,7 @@ namespace MathLib.Objects
 
         public static void AllEigenvalues(Matrix A, double eps, out double[] eigenvalues)
         {
-            int dim = A.Rows;
+            int dim = A.rows;
             eigenvalues = new double[dim];
             Matrix L = new Matrix(dim, dim);
             Matrix U = new Matrix(dim, dim);
@@ -1095,19 +1069,6 @@ namespace MathLib.Objects
             }
         }
 
-        public static Matrix InverseMatrix1(Matrix A)
-        {
-            Matrix matrix = new Matrix();
-            Vector e;
-            for (int i = 0; i < A.Columns; i++)
-            {
-                e = new Vector(A.Rows);
-                e[i] = 1;
-                matrix = matrix.AddColumn(GaussMethod.Solve(A, e));
-            }
-            return matrix;
-        }
-
         public static Matrix operator *(Matrix matrix1, Matrix matrix2)
         {
             if (matrix1.columns == matrix2.rows)
@@ -1131,7 +1092,6 @@ namespace MathLib.Objects
                 throw new ArgumentException("the number of columns of matrix 1 does not equal with the number of rows of matrix 2 ");
             }
         }
-
         public static Matrix operator *(Matrix matrix, double value)
         {
             double[,] outMatrix = new double[matrix.rows, matrix.columns];
@@ -1144,7 +1104,6 @@ namespace MathLib.Objects
             }
             return new Matrix(outMatrix);
         }
-
         public static Matrix operator *(double value, Matrix matrix)
         {
             double[,] outMatrix = new double[matrix.rows, matrix.columns];
@@ -1157,10 +1116,9 @@ namespace MathLib.Objects
             }
             return new Matrix(outMatrix);
         }
-
         public static Vector operator *(Matrix matrix, Vector vector)
         {
-            if (matrix.columns == vector.Dim)
+            if (matrix.columns == vector.dim)
             {
                 double[] outVector = new double[matrix.rows];
                 for (int i = 0; i < matrix.rows; i++)
@@ -1178,10 +1136,9 @@ namespace MathLib.Objects
                 throw new ArgumentException("The number of columns of matrix1 does not equal dimnesions of vector");
             }
         }
-
         public static Vector operator *(Vector vector, Matrix matrix)
         {
-            if (matrix.columns == vector.Dim && matrix.Rows == 1)
+            if (matrix.columns == vector.dim && matrix.rows == 1)
             {
                 double[] outVector = new double[matrix.rows];
                 for (int i = 0; i < matrix.rows; i++)
@@ -1199,7 +1156,6 @@ namespace MathLib.Objects
                 throw new ArgumentException("The number of columns of matrix1 does not equal dimnesions of vector");
             }
         }
-
 
         public static Matrix operator +(Matrix matrix1, Matrix matrix2)
         {

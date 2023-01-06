@@ -11,8 +11,8 @@ namespace MathLib.SolvingLinearSystem
     {
         public static Vector Solve(Matrix A, Vector b)
         {
-            int rows = A.Rows;
-            int columns = A.Columns;
+            int rows = A.rows;
+            int columns = A.columns;
             Matrix cMatrix = new Matrix(A);
             Vector fVector = new Vector(b);
             double tValue;

@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathLib.Objects;
 using static System.Math;
 
 namespace MathLib.SolvingNonlinearEquations
 {
     public abstract class BisectionMethod
     {
-		public delegate double Function(double x);
+		private static Dictionary<string, double> variableA = new Dictionary<string, double>() { { "x", 0 } };
+		private static Dictionary<string, double> variableB = new Dictionary<string, double>() { { "x", 0 } };
+		private static Dictionary<string, double> variableMed = new Dictionary<string, double>() { { "x", 0 } };
 
 		private static double g(double x, Function f, List<double> s)
         {
-			double result = f(x);
+			double result = f.Calculate(new Dictionary<string, double>() { {"x", x} });
 			for(int i = 0; i < s.Count; i++)
             {
 				result /= (x - s[i]);
@@ -58,20 +61,61 @@ namespace MathLib.SolvingNonlinearEquations
 			}
 		}
 
+		public static List<double> Solve1(double a, double b, double eps, Function f)
+        {
+			List<double> solves = new List<double>();
+
+			int n = 100;
+			double h = (b - a) / n;
+			while(h > eps)
+            {
+				n *= 2;
+				h = (b - a) / n;
+            }
+
+			f["x"] = a;
+			double prevY = f.Calculate();
+			double currentY;
+			for(int i = 1; i <= n; i++)
+            {
+				f["x"] = a + i * h;
+				currentY = f.Calculate();
+				if(currentY == 0)
+                {
+					solves.Add(a + i * h);
+                }
+				else if(prevY == 0)
+                {
+					solves.Add(a + (i - 1) * h);
+                }
+				else if(currentY * prevY < 0)
+                {
+					solves.Add(a + i * h - h / 2);
+                }
+
+				prevY = currentY;
+            }
+
+			return solves;
+        }
+
 		public static List<double> Solve(double a, double b, double eps, Function f)
         {
 			List<double> solve = new List<double>();
 			double left = a;
 			double right = b;
-			if (f(a) >= 0 && f(b) <= 0 || f(a) <= 0 && f(b) >= 0)
+			variableA["x"] = a;
+			variableB["x"] = b;
+			if (f.Calculate(variableA) >= 0 && f.Calculate(variableB) <= 0 ||
+				f.Calculate(variableA) <= 0 && f.Calculate(variableB) >= 0)
 			{
 				double med = 0;
-				if (f(a) == 0)
+				if (f.Calculate(variableA) == 0)
 				{
 					solve.Add(a);
 					NextSolve(a, b, eps, f, ref solve);
 				}
-				else if (f(b) == 0)
+				else if (f.Calculate(variableB) == 0)
 				{
 					solve.Add(b);
 					NextSolve(a, b, eps, f, ref solve);
@@ -79,7 +123,9 @@ namespace MathLib.SolvingNonlinearEquations
 				while (Abs(left - right) > eps)
 				{
 					med = (left + right) / 2;
-					if (f(med) > 0 && f(right) < 0 || f(med) < 0 && f(right) > 0)
+					variableMed["x"] = med;
+					if (f.Calculate(variableMed) > 0 && f.Calculate(variableB) < 0 ||
+						f.Calculate(variableMed) < 0 && f.Calculate(variableB) > 0)
 					{
 						left = med;
 					}

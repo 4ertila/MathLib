@@ -11,12 +11,12 @@ namespace MathLib.SolvingLinearSystem
     {
         public static Vector Solve(Matrix A, Vector b, double eps)
         {
-            Matrix E = Matrix.IdentityMatrix(A.Rows);
+            Matrix E = Matrix.IdentityMatrix(A.rows);
             Matrix B = E - 0.5 * E;
             double q = B.Norm();
             Vector c = 0.5 * A.InverseMatrix() * b;
 
-            Vector xPrev = Vector.IdentityVector(A.Rows);
+            Vector xPrev = Vector.IdentityVector(A.rows);
             Vector x = B * xPrev + c;
 
             while ((x - xPrev).Norm() >= (1 - q) * eps / q)

@@ -3,32 +3,64 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathLib.Objects;
 
 namespace MathLib.Аpproximation
 {
-    public abstract class NewtonPolynomial : Approximation
+    public abstract class NewtonPolynomial
     {
-        public static double[] Approximate(double[] x, double[] y)
+        public static double Approximate(double[] xValues, double[] yValues, double x)
         {
-            int n = x.Length;
-            double[] a = new double[n];
+            int n = xValues.Length;
             double[] fPrev;
             double[] f = new double[n];
-            double[] tArr = new double[0];
-            double tValue = 0;
+            double result = 0;
+            double tValue;
+            Array.Copy(yValues, f, n);
+            int i = 0;
+
+            do
+            {
+                tValue = 1;
+                for (int k = 0; k < i; k++)
+                {
+                    tValue *= x - xValues[k];
+                }
+                result += tValue * f[0];
+
+                fPrev = f;
+
+                f = new double[fPrev.Length - 1];
+                for (int j = 0; j < f.Length; j++)
+                {
+                    f[j] = (fPrev[j + 1] - fPrev[j]) / (xValues[j + i + 1] - xValues[j]);
+                }
+
+                i++;
+            }
+            while (i < n);
+
+            return result;
+        }
+
+        public static Polynomial Approximate(double[] x, double[] y)
+        {
+            int n = x.Length;
+            double[] fPrev;
+            double[] f = new double[n];
+            Polynomial result = new Polynomial();
+            Polynomial tPolynomial;
             Array.Copy(y, f, n);
             int i = 0;
 
             do
             {
+                tPolynomial = new Polynomial(new double[] { 1 });
                 for (int k = 0; k < i; k++)
                 {
-                    tValue = 0;
-                    Combinations(ref tValue, i - k, tArr);
-                    a[k] += tValue * f[0];
+                    tPolynomial *= new Polynomial(new double[] { -x[k], 1 });
                 }
-                a[i] += f[0];
-                tArr = tArr.Append(x[i]).ToArray();
+                result += tPolynomial * f[0];
 
                 fPrev = f;
 
@@ -41,35 +73,31 @@ namespace MathLib.Аpproximation
                 i++;
             }
             while (i < n);
-            a[n - 1] = fPrev[0];
 
-            return a;
+            return result;
         }
 
-        public static double[] Approximate(double[] x, Function y)
+        public static Polynomial Approximate(double[] x, Function y)
         {
             int n = x.Length;
-            double[] a = new double[n];
             double[] fPrev;
             double[] f = new double[n];
-            double[] tArr = new double[0];
-            double tValue = 0;
-            for(int j = 0; j < n; j++)
+            Polynomial result = new Polynomial();
+            Polynomial tPolynomial;
+            for (int j = 0; j < n; j++)
             {
-                f[j] = y(x[j]);
+                y["x"] = x[j];
+                f[j] = y.Calculate();
             }
-            int i = 0;
 
-            do
-            {
+            for(int i = 0; i < n; i++)
+            { 
+                tPolynomial = new Polynomial(new double[] { 1 });
                 for (int k = 0; k < i; k++)
                 {
-                    tValue = 0;
-                    Combinations(ref tValue, i - k, tArr);
-                    a[k] += tValue * f[0];
+                    tPolynomial *= new Polynomial(new double[] { -x[k], 1 });
                 }
-                a[i] += f[0];
-                tArr = tArr.Append(x[i]).ToArray();
+                result += tPolynomial * f[0];
 
                 fPrev = f;
 
@@ -78,13 +106,9 @@ namespace MathLib.Аpproximation
                 {
                     f[j] = (fPrev[j + 1] - fPrev[j]) / (x[j + i + 1] - x[j]);
                 }
-
-                i++;
             }
-            while (i < n);
-            a[n - 1] = fPrev[0];
 
-            return a;
+            return result;
         }
     }
 }

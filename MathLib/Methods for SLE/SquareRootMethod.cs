@@ -12,8 +12,8 @@ namespace MathLib.SolvingLinearSystem
     {
         public static Vector Solve(Matrix A, Vector b)
         {
-            int rows = A.Rows;
-            int columns = A.Columns;
+            int rows = A.rows;
+            int columns = A.columns;
             Matrix D = new Matrix(rows, columns);
             Matrix S = new Matrix(rows, columns);
 

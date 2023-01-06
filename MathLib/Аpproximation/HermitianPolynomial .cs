@@ -9,9 +9,9 @@ using static System.Math;
 
 namespace MathLib.Аpproximation
 {
-    public abstract class HermitianPolynomial : Approximation
+    public abstract class HermitianPolynomial
     {
-        public static double[] Approximate(double[] x, double[] f, double[,] df)
+        public static Polynomial Approximate(double[] x, double[] f, double[,] df)
         {
             int n = f.Length;
             for(int i = 0; i < df.GetLength(0); i++)
@@ -57,7 +57,7 @@ namespace MathLib.Аpproximation
                 }
             }
 
-            return GaussMethod.Solve(H, b).Reverse().ToArray();
+            return new Polynomial(GaussMethod.Solve(H, b).Reverse());
         }
     }
 }

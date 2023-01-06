@@ -3,78 +3,80 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathLib.Objects;
 using static System.Math;
+using System.Numerics;
 
 namespace MathLib.Аpproximation
 {
-    public abstract class LagrangePolynomial : Approximation
-    {       
-        public static double[] Approximate(double[] x, double[] y)
+    public abstract class LagrangePolynomial
+    {
+        public static double Approximate(double[] xValues, double[] yValues, double x)
         {
-            int n = x.Length;
-            double yi;
-            double[] a = new double[n];
-            double[] tArr = new double[n];
-            double tValue;
-            Array.Copy(x, tArr, n);
-
-            for (int i = 0; i < n; i++)
+            double result = 0;
+            int n = xValues.Length;
+            for(int i = 0; i < n; i++)
             {
-                yi = y[i];
-                for(int j = 0; j < n; j++)
+                double tValue = 1;
+                for (int j = 0; j < n; j++)
                 {
-                    if(j != i)
+                    if (j != i)
                     {
-                        yi /= x[i] - x[j];
+                        tValue *= (x - xValues[j]) / (xValues[i] - xValues[j]);
                     }
                 }
-
-                tArr[i] = 0;
-                for (int k = 0; k < n - 1; k++)
-                {
-                    tValue = 0;
-                    Combinations(ref tValue, n - k - 1, tArr);
-                    a[k] += tValue * yi;
-                }
-                a[n - 1] += yi;
-                tArr[i] = x[i];
+                result += tValue * yValues[i];
             }
-
-            return a;
+            return result;
         }
 
-        public static double[] Approximate(double[] x, Function f)
+        public static Polynomial Approximate(double[] x, double[] y)
         {
             int n = x.Length;
-            double yi;
-            double tValue;
-            double[] a = new double[n];
-            double[] tArr = new double[n];
-            Array.Copy(x, tArr, n);
+            Polynomial result = new Polynomial();
+            Polynomial tPolynomial;
 
             for (int i = 0; i < n; i++)
             {
-                yi = f(x[i]);
-                for(int j = 0; j < n; j++)
+                tPolynomial = new Polynomial(new double[] { 1 }) * y[i];
+
+                for (int j = 0; j < n; j++)
                 {
                     if(j != i)
                     {
-                        yi /= x[i] - x[j];
+                        tPolynomial *= new Polynomial(new double[] { -x[j], 1 }) / (x[i] - x[j]);
                     }
                 }
 
-                tArr[i] = 0;
-                for (int k = 0; k < n - 1; k++)
-                {
-                    tValue = 0;
-                    Combinations(ref tValue, n - k - 1, tArr);
-                    a[k] += tValue * yi;
-                }
-                a[n - 1] += yi;
-                tArr[i] = x[i];
+                result += tPolynomial;
             }
 
-            return a;
+            return result;
+        }
+
+        public static Polynomial Approximate(double[] x, Function f)
+        {
+            int n = x.Length;
+            Polynomial result = new Polynomial();
+            Polynomial tPolynomial;
+
+            for (int i = 0; i < n; i++)
+            {
+                f["x"] = x[i];
+                tPolynomial = new Polynomial(new double[] { 1 }) * f.Calculate();
+
+                for (int j = 0; j < n; j++)
+                {
+                    if (j != i)
+                    {
+                        tPolynomial *= new Polynomial(new double[] { -x[j], 1 }) / (x[i] - x[j]);
+                    }
+                }
+
+                result += tPolynomial;
+            }
+
+            return result;
         }
     }
 }

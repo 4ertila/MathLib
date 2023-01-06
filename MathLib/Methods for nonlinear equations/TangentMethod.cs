@@ -10,20 +10,21 @@ namespace MathLib.SolvingNonlinearEquations
 {
     public abstract class TangentMethod
     {
-        public delegate double Function(double x);
-
         public static double Solve(double a, double b, double eps, Function f, Function df)
         {
-            double x = a - f(a) / df(0);
-            double df0 = df(a);
-            double xPrev;
+            Dictionary<string, double> variableA = new Dictionary<string, double>() { { "x", a } };
+            Dictionary<string, double> xPrev = new Dictionary<string, double>() { { "x", a } };
+
+            double x = a - f.Calculate(variableA) / df.Calculate(variableA);
+            double df0 = df.Calculate(variableA);
 
             do
             {
-                xPrev = x;
-                x = xPrev - f(xPrev) / df0;
+                xPrev["x"] = x;
+
+                x = x - f.Calculate(xPrev) / df.Calculate(xPrev);
             }
-            while (Abs(x - xPrev) > eps);
+            while (Abs(x - xPrev["x"]) > eps);
 
             return x;
         }

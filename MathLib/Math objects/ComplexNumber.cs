@@ -9,140 +9,128 @@ namespace MathLib.Objects
 {
     public class ComplexNumber
     {
-        public double Re;
-        public double Im;
+        public double re;
+        public double im;
 
-        public ComplexNumber(double Re, double Im)
+        public ComplexNumber(double re, double im)
         {
-            this.Re = Re;
-            this.Im = Im;
+            this.re = re;
+            this.im = im;
         }
-
         public ComplexNumber(ComplexNumber ComplexNumber)
         {
-            Re = ComplexNumber.Re;
-            Im = ComplexNumber.Im;
+            re = ComplexNumber.re;
+            im = ComplexNumber.im;
         }
-
         public ComplexNumber()
         {
-            Re = 0;
-            Im = 0;
+            re = 0;
+            im = 0;
         }
 
         public static double Abs(ComplexNumber ComplexNumber)
         {
-            return Sqrt(Pow(ComplexNumber.Re, 2) * Pow(ComplexNumber.Im, 2));
+            return Sqrt(Pow(ComplexNumber.re, 2) * Pow(ComplexNumber.im, 2));
         }
 
         public ComplexNumber Conjugate()
         {
-            return new ComplexNumber(Re, -Im);
+            return new ComplexNumber(re, -im);
         }
 
         public ComplexNumber ReverseComplexNumber()
         {
-            return new ComplexNumber(Conjugate() / (Pow(Re, 2) + Pow(Im, 2)));
+            return new ComplexNumber(Conjugate() / (Pow(re, 2) + Pow(im, 2)));
         }
 
         public override string ToString()
         {
-            if(Im < 0)
+            if(im < 0)
             {
-                return Re.ToString() + Im.ToString() + "i";
+                return re.ToString() + im.ToString() + "i";
             }
-            else if(Im == 0)
+            else if(im == 0)
             {
-                return Re.ToString();
+                return re.ToString();
             }
             else
             {
-                return Re.ToString() + "+" + Im.ToString() + "i";
+                return re.ToString() + "+" + im.ToString() + "i";
             }
         }
 
         public static ComplexNumber operator +(ComplexNumber ComplexNumber1, ComplexNumber ComplexNumber2)
         {
-            return new ComplexNumber(ComplexNumber1.Re + ComplexNumber2.Re, ComplexNumber1.Im + ComplexNumber2.Im);
+            return new ComplexNumber(ComplexNumber1.re + ComplexNumber2.re, ComplexNumber1.im + ComplexNumber2.im);
         }
-
         public static ComplexNumber operator +(ComplexNumber ComplexNumber, double value)
         {
-            return new ComplexNumber(ComplexNumber.Re + value, ComplexNumber.Im);
+            return new ComplexNumber(ComplexNumber.re + value, ComplexNumber.im);
         }
-
         public static ComplexNumber operator +(double value, ComplexNumber ComplexNumber)
         {
-            return new ComplexNumber(ComplexNumber.Re + value, ComplexNumber.Im);
+            return new ComplexNumber(ComplexNumber.re + value, ComplexNumber.im);
         }
 
         public static ComplexNumber operator -(ComplexNumber ComplexNumber1, ComplexNumber ComplexNumber2)
         {
-            return new ComplexNumber(ComplexNumber1.Re - ComplexNumber2.Re, ComplexNumber1.Im - ComplexNumber2.Im);
+            return new ComplexNumber(ComplexNumber1.re - ComplexNumber2.re, ComplexNumber1.im - ComplexNumber2.im);
         }
-
         public static ComplexNumber operator -(ComplexNumber ComplexNumber, double value)
         {
-            return new ComplexNumber(ComplexNumber.Re - value, ComplexNumber.Im);
+            return new ComplexNumber(ComplexNumber.re - value, ComplexNumber.im);
         }
-
         public static ComplexNumber operator -(double value, ComplexNumber ComplexNumber)
         {
-            return new ComplexNumber(value - ComplexNumber.Re, -ComplexNumber.Im);
+            return new ComplexNumber(value - ComplexNumber.re, -ComplexNumber.im);
         }
 
         public static ComplexNumber operator *(ComplexNumber ComplexNumber1, ComplexNumber ComplexNumber2)
         {
-            return new ComplexNumber(ComplexNumber1.Re * ComplexNumber2.Re - ComplexNumber1.Im * ComplexNumber2.Im, 
-                               ComplexNumber1.Re * ComplexNumber2.Im + ComplexNumber1.Im * ComplexNumber2.Re);
+            return new ComplexNumber(ComplexNumber1.re * ComplexNumber2.re - ComplexNumber1.im * ComplexNumber2.im, 
+                               ComplexNumber1.re * ComplexNumber2.im + ComplexNumber1.im * ComplexNumber2.re);
         }
-
         public static ComplexNumber operator *(ComplexNumber ComplexNumber, double value)
         {
-            return new ComplexNumber(ComplexNumber.Re * value, ComplexNumber.Im * value);
+            return new ComplexNumber(ComplexNumber.re * value, ComplexNumber.im * value);
         }
-
         public static ComplexNumber operator *(double value, ComplexNumber ComplexNumber)
         {
-            return new ComplexNumber(ComplexNumber.Re * value, ComplexNumber.Im * value);
+            return new ComplexNumber(ComplexNumber.re * value, ComplexNumber.im * value);
         }
 
         public static ComplexNumber operator /(ComplexNumber ComplexNumber1, ComplexNumber ComplexNumber2)
         {
-            return new ComplexNumber(ComplexNumber1 * ComplexNumber2.Conjugate() / (Pow(ComplexNumber2.Re, 2) + Pow(ComplexNumber2.Im, 2)));
+            return new ComplexNumber(ComplexNumber1 * ComplexNumber2.Conjugate() / (Pow(ComplexNumber2.re, 2) + Pow(ComplexNumber2.im, 2)));
         }
-
         public static ComplexNumber operator /(ComplexNumber ComplexNumber, double value)
         {
-            return new ComplexNumber(ComplexNumber.Re / value, ComplexNumber.Im / value);
+            return new ComplexNumber(ComplexNumber.re / value, ComplexNumber.im / value);
         }
-
         public static ComplexNumber operator /(double value, ComplexNumber ComplexNumber)
         {
-            return new ComplexNumber(value * ComplexNumber.Conjugate() / (Pow(ComplexNumber.Re, 2) + Pow(ComplexNumber.Im, 2)));
+            return new ComplexNumber(value * ComplexNumber.Conjugate() / (Pow(ComplexNumber.re, 2) + Pow(ComplexNumber.im, 2)));
         }
 
         public static bool operator ==(ComplexNumber ComplexNumber1, ComplexNumber ComplexNumber2)
         {
-            if(ComplexNumber1.Re == ComplexNumber2.Re && ComplexNumber1.Im == ComplexNumber2.Im)
+            if(ComplexNumber1.re == ComplexNumber2.re && ComplexNumber1.im == ComplexNumber2.im)
             {
                 return true;
             }
             return false;
         }
-
         public static bool operator ==(ComplexNumber ComplexNumber, double value)
         {
-            if (ComplexNumber.Re == value && ComplexNumber.Im == 0)
+            if (ComplexNumber.re == value && ComplexNumber.im == 0)
             {
                 return true;
             }
             return false;
         }
-
         public static bool operator ==(double value, ComplexNumber ComplexNumber)
         {
-            if (ComplexNumber.Re == value && ComplexNumber.Im == 0)
+            if (ComplexNumber.re == value && ComplexNumber.im == 0)
             {
                 return true;
             }
@@ -151,25 +139,23 @@ namespace MathLib.Objects
 
         public static bool operator !=(ComplexNumber ComplexNumber1, ComplexNumber ComplexNumber2)
         {
-            if (ComplexNumber1.Re != ComplexNumber2.Re || ComplexNumber1.Im != ComplexNumber2.Im)
+            if (ComplexNumber1.re != ComplexNumber2.re || ComplexNumber1.im != ComplexNumber2.im)
             {
                 return true;
             }
             return false;
         }
-
         public static bool operator !=(ComplexNumber ComplexNumber, double value)
         {
-            if (ComplexNumber.Re != value || ComplexNumber.Im != 0)
+            if (ComplexNumber.re != value || ComplexNumber.im != 0)
             {
                 return true;
             }
             return false;
         }
-
         public static bool operator !=(double value, ComplexNumber ComplexNumber)
         {
-            if (ComplexNumber.Re != value || ComplexNumber.Im != 0)
+            if (ComplexNumber.re != value || ComplexNumber.im != 0)
             {
                 return true;
             }

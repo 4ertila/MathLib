@@ -10,21 +10,17 @@ namespace MathLib.Objects
     {
         private RationalNumber[] values;
 
-        private int dim;
-
-        public int Dim
-        {
-            get
-            {
-                return dim;
-            }
-        }
+        public int dim { private set; get; } = 0;
 
         public RationalNumber this[int i]
         {
+            set
+            {
+                values[i] = new RationalNumber(value);
+            }
             get
             {
-                return values[i];
+                return new RationalNumber(values[i]);
             }
         }
 
@@ -33,7 +29,6 @@ namespace MathLib.Objects
             values = null;
             dim = 0;
         }
-
         public RationalVector(int dim)
         {
             this.dim = dim;
@@ -43,20 +38,20 @@ namespace MathLib.Objects
                 values[i] = new RationalNumber(0, 1);
             }
         }
-
-        public RationalVector(RationalNumber[] vector)
+        public RationalVector(IEnumerable<RationalNumber> vector)
         {
-            dim = vector.Length;
+            dim = vector.Count();
             values = new RationalNumber[dim];
-            for (int i = 0; i < dim; i++)
+            int i = 0;
+            foreach(RationalNumber rational in vector)
             {
-                values[i] = vector[i];
+                values[i] = rational;
+                i++;
             }
         }
-
         public RationalVector(RationalVector vector)
         {
-            dim = vector.Dim;
+            dim = vector.dim;
             values = new RationalNumber[dim];
             for (int i = 0; i < dim; i++)
             {
@@ -84,7 +79,7 @@ namespace MathLib.Objects
             return new RationalVector(outVector);
         }
 
-        public RationalVector DeleteRational(int id)
+        public RationalVector RemoveRational(int id)
         {
             RationalNumber[] outRational = new RationalNumber[dim - 1];
             for (int i = 0; i < dim; i++)
@@ -97,7 +92,7 @@ namespace MathLib.Objects
             return new RationalVector(outRational);
         }
 
-        public RationalNumber Length()
+        public RationalNumber Norm()
         {
             RationalNumber tNumber = new RationalNumber();
             for (int i = 0; i < dim; i++)
@@ -207,6 +202,7 @@ namespace MathLib.Objects
             }
             return null;
         }
+
         public static RationalVector[] Basis(RationalVector[] vectors)
         {
             RationalMatrix matrix = new RationalMatrix(vectors);
@@ -267,7 +263,6 @@ namespace MathLib.Objects
             }
             return outRational;
         }
-
         public static RationalVector operator *(RationalVector vector1, RationalNumber r)
         {
             RationalNumber[] outRational = new RationalNumber[vector1.dim];
@@ -277,7 +272,6 @@ namespace MathLib.Objects
             }
             return new RationalVector(outRational);
         }
-
         public static RationalVector operator *(RationalNumber r, RationalVector vector1)
         {
             RationalNumber[] outRational = new RationalNumber[vector1.dim];
@@ -287,7 +281,6 @@ namespace MathLib.Objects
             }
             return new RationalVector(outRational);
         }
-
         public static RationalVector operator *(int r, RationalVector vector1)
         {
             RationalNumber[] outRational = new RationalNumber[vector1.dim];
@@ -297,7 +290,6 @@ namespace MathLib.Objects
             }
             return new RationalVector(outRational);
         }
-
         public static RationalVector operator *(RationalVector vector1, int r)
         {
             RationalNumber[] outRational = new RationalNumber[vector1.dim];

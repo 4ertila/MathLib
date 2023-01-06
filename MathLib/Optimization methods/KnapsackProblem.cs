@@ -22,9 +22,10 @@ namespace MathLib.OptimizationMethods
                     f[i, j] = Max(f[i - 1, j], c[n - i] + f[i - 1, j + a[n - i]]);
                 }
 
-                for ( ; j < b + 1; j++)
+                while (j < b + 1)
                 {
                     f[i, j] = f[i - 1, j];
+                    j++;
                 }
             }
 

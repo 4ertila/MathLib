@@ -11,8 +11,8 @@ namespace MathLib.SolvingLinearSystem
     {
         public static Vector Solve(Matrix A, Vector b, double eps)
         {
-            int rows = A.Rows;
-            int columns = A.Columns;
+            int rows = A.rows;
+            int columns = A.columns;
             Matrix L = new Matrix(rows, columns);
             Matrix D = new Matrix(rows, columns);
             Matrix R = new Matrix(rows, columns);
@@ -35,11 +35,8 @@ namespace MathLib.SolvingLinearSystem
 
             do
             {
-                for (int i = 0; i < x.Dim; i++)
-                {
-                    Console.WriteLine($"x{i + 1}: " + x[i]);
-                }
                 xPrev = new Vector(x);
+
                 for (int i = 0; i < rows; i++)
                 {
                     x[i] = 0;
@@ -53,8 +50,6 @@ namespace MathLib.SolvingLinearSystem
                     }
                     x[i] += c[i];
                 }
-                Console.WriteLine((x - xPrev).Norm());
-                Console.ReadKey();
             }
             while ((x - xPrev).Norm() >= eps);
 

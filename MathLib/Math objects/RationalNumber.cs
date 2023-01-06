@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Math;
 
 namespace MathLib.Objects
 {
-    public class RationalNumber
+    public class RationalNumber : IComparer<RationalNumber>
     {
-        private int m;
-        private int n;
+        public int m { private set; get; }
+        public int n { private set; get; }
 
         public RationalNumber(int m, int n)
         {
@@ -52,29 +53,23 @@ namespace MathLib.Objects
         {
             return $"{m}/{n}";
         }
+
         public override bool Equals(object obj)
         {
-            return base.Equals(obj);
+            if (!GetType().Equals(obj.GetType()) || obj == null)
+            {
+                return false;
+            }
+            else
+            {
+                RationalNumber value = (RationalNumber)obj;
+                return this == value;
+            }
         }
+
         public override int GetHashCode()
         {
-            return base.GetHashCode();
-        }
-
-        public int M
-        {
-            get
-            {
-                return m;
-            }
-        }
-
-        public int N
-        {
-            get
-            {
-                return n;
-            }
+            return n^m;
         }
 
         public static int Nod(int a, int b)
@@ -123,6 +118,20 @@ namespace MathLib.Objects
         public RationalNumber OppositeRational()
         {
             return new RationalNumber(-m, n);
+        }
+
+        public int Compare(RationalNumber x, RationalNumber y)
+        {
+            if(x == y)
+            {
+                return 0;
+            }
+            if(x > y)
+            {
+                return 1;
+            }
+            return -1;
+
         }
 
         public static RationalNumber operator *(RationalNumber frac1, RationalNumber frac2)

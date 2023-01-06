@@ -9,30 +9,18 @@ namespace MathLib.Objects
     public class RationalMatrix
     {
         private RationalNumber[,] values;
-        private int columns;
-        private int rows;
-
-        public int Rows
-        {
-            get
-            {
-                return rows;
-            }
-        }
-
-        public int Columns
-        {
-            get
-            {
-                return columns;
-            }
-        }
+        public int columns { private set; get; }
+        public int rows { private set; get; }
 
         public RationalNumber this[int i, int j]
         {
+            set
+            {
+                values[i, j] = new RationalNumber(value);
+            }
             get
             {
-                return values[i, j];
+                return new RationalNumber(values[i, j]);
             }
         }
 
@@ -42,7 +30,6 @@ namespace MathLib.Objects
             columns = 0;
             rows = 0;
         }
-
         public RationalMatrix(int rows, int columns)
         {
             this.rows = rows;
@@ -56,7 +43,6 @@ namespace MathLib.Objects
                 }
             }
         }
-
         public RationalMatrix(RationalNumber[,] values)
         {
             rows = values.GetLength(0);
@@ -70,11 +56,10 @@ namespace MathLib.Objects
                 }
             }
         }
-
         public RationalMatrix(RationalMatrix matrix)
         {
-            rows = matrix.Rows;
-            columns = matrix.Columns;
+            rows = matrix.rows;
+            columns = matrix.columns;
             values = new RationalNumber[rows, columns];
             for (int i = 0; i < rows; i++)
             {
@@ -84,11 +69,10 @@ namespace MathLib.Objects
                 }
             }
         }
-
         public RationalMatrix(RationalVector[] vectors)
         {
             rows = vectors.Length;
-            columns = vectors[0].Dim;
+            columns = vectors[0].dim;
             values = new RationalNumber[rows, columns];
             for (int i = 0; i < rows; i++)
             {
@@ -131,6 +115,7 @@ namespace MathLib.Objects
             return max;
         }
 
+
         public RationalMatrix AddColumn(RationalVector vector, int newMatrixId)
         {
             if (vector == null)
@@ -138,12 +123,12 @@ namespace MathLib.Objects
                 return new RationalMatrix(values);
             }
 
-            RationalNumber[,] outMatrix = new RationalNumber[vector.Dim, columns + 1];
+            RationalNumber[,] outMatrix = new RationalNumber[vector.dim, columns + 1];
             for (int i = 0, k = 0; i < columns + 1; i++)
             {
                 if (i == newMatrixId)
                 {
-                    for (int j = 0; j < vector.Dim; j++)
+                    for (int j = 0; j < vector.dim; j++)
                     {
                         outMatrix[j, i] = new RationalNumber(vector[j]);
                     }
@@ -167,13 +152,13 @@ namespace MathLib.Objects
                 return new RationalMatrix(values);
             }
 
-            RationalNumber[,] outMatrix = new RationalNumber[vector[0].Dim, columns + vector.Length];
+            RationalNumber[,] outMatrix = new RationalNumber[vector[0].dim, columns + vector.Length];
             for (int i = 0, k = 0; i < columns + vector.Length; i++)
             {
                 if (newMatrixId.Contains(i))
                 {
                     int id = Array.BinarySearch(newMatrixId, i);
-                    for (int j = 0; j < vector[0].Dim; j++)
+                    for (int j = 0; j < vector[0].dim; j++)
                     {
                         outMatrix[j, i] = new RationalNumber(vector[id][j]);
                     }
@@ -189,7 +174,6 @@ namespace MathLib.Objects
             }
             return new RationalMatrix(outMatrix);
         }
-
         public RationalMatrix AddColumns(RationalNumber[,] values, int[] newMatrixId)
         {
             if (values == null || newMatrixId == null)
@@ -213,95 +197,6 @@ namespace MathLib.Objects
                     for (int j = 0; j < rows; j++)
                     {
                         outMatrix[j, i] = new RationalNumber(this.values[j, k]);
-                    }
-                    k++;
-                }
-            }
-            return new RationalMatrix(outMatrix);
-        }
-
-        public RationalMatrix AddRow(RationalVector vector, int newMatrixId)
-        {
-            if (vector == null)
-            {
-                return new RationalMatrix(values);
-            }
-
-            RationalNumber[,] outMatrix = new RationalNumber[rows + 1, vector.Dim];
-            for (int i = 0, k = 0; i < rows + 1; i++)
-            {
-                if (i == newMatrixId)
-                {
-                    for (int j = 0; j < vector.Dim; j++)
-                    {
-                        outMatrix[i, j] = new RationalNumber(vector[j]);
-                    }
-                }
-                else
-                {
-                    for (int j = 0; j < columns; j++)
-                    {
-                        outMatrix[i, j] = new RationalNumber(values[k, j]);
-                    }
-                    k++;
-                }
-            }
-            return new RationalMatrix(outMatrix);
-        }
-
-        public RationalMatrix AddRows(RationalVector[] vector, int[] newMatrixId)
-        {
-            if (vector == null || newMatrixId == null)
-            {
-                return new RationalMatrix(values);
-            }
-
-            RationalNumber[,] outMatrix = new RationalNumber[rows + vector.Length, vector[0].Dim];
-            for (int i = 0, k = 0; i < rows + vector.Length; i++)
-            {
-                if (newMatrixId.Contains(i))
-                {
-                    int id = Array.BinarySearch(newMatrixId, i);
-                    for (int j = 0; j < vector[0].Dim; j++)
-                    {
-                        outMatrix[i, j] = new RationalNumber(vector[j][id]);
-                    }
-                }
-                else
-                {
-                    for (int j = 0; j < rows; j++)
-                    {
-                        outMatrix[i, j] = new RationalNumber(values[k, j]);
-                    }
-                    k++;
-                }
-            }
-            return new RationalMatrix(outMatrix);
-        }
-
-        public RationalMatrix AddRows(RationalNumber[,] values, int[] newMatrixId)
-        {
-            if (values == null || newMatrixId == null)
-            {
-                return new RationalMatrix(values);
-            }
-
-            RationalNumber[,] outMatrix = new RationalNumber[rows + values.GetLength(0), values.GetLength(1)];
-            for (int i = 0, k = 0; i < rows + values.GetLength(0); i++)
-            {
-                if (newMatrixId.Contains(i))
-                {
-                    int id = Array.BinarySearch(newMatrixId, i);
-                    for (int j = 0; j < values.GetLength(1); j++)
-                    {
-                        outMatrix[i, j] = new RationalNumber(values[j, id]);
-                    }
-                }
-                else
-                {
-                    for (int j = 0; j < rows; j++)
-                    {
-                        outMatrix[i, j] = new RationalNumber(this.values[k, j]);
                     }
                     k++;
                 }
@@ -351,48 +246,6 @@ namespace MathLib.Objects
             return new RationalMatrix(outMatrix);
         }
 
-        public RationalMatrix DeleteRow(int id)
-        {
-            RationalNumber[,] outMatrix = new RationalNumber[rows - 1, columns];
-            for (int i = 0, t = 0; i < rows; i++)
-            {
-                if (i != id)
-                {
-                    for (int j = 0; j < columns; j++)
-                    {
-                        outMatrix[t, j] = values[i, j];
-                    }
-                    t++;
-                }
-                else
-                {
-                    continue;
-                }
-            }
-            return new RationalMatrix(outMatrix);
-        }
-
-        public RationalMatrix DeleteRows(int[] id)
-        {
-            RationalNumber[,] outMatrix = new RationalNumber[rows - id.Length, columns];
-            for (int i = 0, t = 0; i < rows; i++)
-            {
-                if (!id.Contains(i))
-                {
-                    for (int j = 0; j < columns; j++)
-                    {
-                        outMatrix[t, j] = values[i, j];
-                    }
-                    t++;
-                }
-                else
-                {
-                    continue;
-                }
-            }
-            return new RationalMatrix(outMatrix);
-        }
-
         public RationalMatrix SwapColumns(int id1, int id2)
         {
             RationalNumber[,] outMatrix = new RationalNumber[rows, columns];
@@ -418,6 +271,95 @@ namespace MathLib.Objects
                     {
                         outMatrix[j, i] = values[j, i];
                     }
+                }
+            }
+            return new RationalMatrix(outMatrix);
+        }
+
+
+        public RationalMatrix AddRow(RationalVector vector, int newMatrixId)
+        {
+            if (vector == null)
+            {
+                return new RationalMatrix(values);
+            }
+
+            RationalNumber[,] outMatrix = new RationalNumber[rows + 1, vector.dim];
+            for (int i = 0, k = 0; i < rows + 1; i++)
+            {
+                if (i == newMatrixId)
+                {
+                    for (int j = 0; j < vector.dim; j++)
+                    {
+                        outMatrix[i, j] = new RationalNumber(vector[j]);
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < columns; j++)
+                    {
+                        outMatrix[i, j] = new RationalNumber(values[k, j]);
+                    }
+                    k++;
+                }
+            }
+            return new RationalMatrix(outMatrix);
+        }
+
+        public RationalMatrix AddRows(RationalVector[] vector, int[] newMatrixId)
+        {
+            if (vector == null || newMatrixId == null)
+            {
+                return new RationalMatrix(values);
+            }
+
+            RationalNumber[,] outMatrix = new RationalNumber[rows + vector.Length, vector[0].dim];
+            for (int i = 0, k = 0; i < rows + vector.Length; i++)
+            {
+                if (newMatrixId.Contains(i))
+                {
+                    int id = Array.BinarySearch(newMatrixId, i);
+                    for (int j = 0; j < vector[0].dim; j++)
+                    {
+                        outMatrix[i, j] = new RationalNumber(vector[j][id]);
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < rows; j++)
+                    {
+                        outMatrix[i, j] = new RationalNumber(values[k, j]);
+                    }
+                    k++;
+                }
+            }
+            return new RationalMatrix(outMatrix);
+        }
+        public RationalMatrix AddRows(RationalNumber[,] values, int[] newMatrixId)
+        {
+            if (values == null || newMatrixId == null)
+            {
+                return new RationalMatrix(values);
+            }
+
+            RationalNumber[,] outMatrix = new RationalNumber[rows + values.GetLength(0), values.GetLength(1)];
+            for (int i = 0, k = 0; i < rows + values.GetLength(0); i++)
+            {
+                if (newMatrixId.Contains(i))
+                {
+                    int id = Array.BinarySearch(newMatrixId, i);
+                    for (int j = 0; j < values.GetLength(1); j++)
+                    {
+                        outMatrix[i, j] = new RationalNumber(values[j, id]);
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < rows; j++)
+                    {
+                        outMatrix[i, j] = new RationalNumber(this.values[k, j]);
+                    }
+                    k++;
                 }
             }
             return new RationalMatrix(outMatrix);
@@ -452,6 +394,7 @@ namespace MathLib.Objects
             }
             return new RationalMatrix(outMatrix);
         }
+
 
         public RationalNumber Determinant()
         {
@@ -722,7 +665,6 @@ namespace MathLib.Objects
                 throw new ArgumentException("the number of columns of matrix 1 does not equal with the number of rows of matrix 2 ");
             }
         }
-
         public static RationalMatrix operator *(RationalMatrix matrix, RationalNumber value)
         {
             RationalNumber[,] outMatrix = new RationalNumber[matrix.rows, matrix.columns];
@@ -735,7 +677,6 @@ namespace MathLib.Objects
             }
             return new RationalMatrix(outMatrix);
         }
-
         public static RationalMatrix operator *(RationalNumber value, RationalMatrix matrix)
         {
             RationalNumber[,] outMatrix = new RationalNumber[matrix.rows, matrix.columns];
@@ -748,7 +689,6 @@ namespace MathLib.Objects
             }
             return new RationalMatrix(outMatrix);
         }
-
         public static RationalMatrix operator *(RationalMatrix matrix, int value)
         {
             RationalNumber[,] outMatrix = new RationalNumber[matrix.rows, matrix.columns];
@@ -761,7 +701,6 @@ namespace MathLib.Objects
             }
             return new RationalMatrix(outMatrix);
         }
-
         public static RationalMatrix operator *(int value, RationalMatrix matrix)
         {
             RationalNumber[,] outMatrix = new RationalNumber[matrix.rows, matrix.columns];
@@ -774,10 +713,9 @@ namespace MathLib.Objects
             }
             return new RationalMatrix(outMatrix);
         }
-
         public static RationalVector operator *(RationalMatrix matrix, RationalVector vector)
         {
-            if (matrix.columns == vector.Dim)
+            if (matrix.columns == vector.dim)
             {
                 RationalNumber[] outVector = new RationalNumber[matrix.rows];
                 for (int i = 0; i < matrix.rows; i++)
@@ -795,10 +733,9 @@ namespace MathLib.Objects
                 throw new ArgumentException("The number of columns of matrix1 does not equal dimnesions of vector");
             }
         }
-
         public static RationalVector operator *(RationalVector vector, RationalMatrix matrix)
         {
-            if (matrix.columns == vector.Dim && matrix.Rows == 1)
+            if (matrix.columns == vector.dim && matrix.rows == 1)
             {
                 RationalNumber[] outVector = new RationalNumber[matrix.rows];
                 for (int i = 0; i < matrix.rows; i++)

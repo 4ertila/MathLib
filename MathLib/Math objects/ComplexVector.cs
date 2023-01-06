@@ -10,21 +10,13 @@ namespace MathLib.Objects
     {
         private ComplexNumber[] values;
 
-        private int dim;
-
-        public int Dim
-        {
-            get
-            {
-                return dim;
-            }
-        }
+        public int dim { private set; get; }
 
         public ComplexNumber this[int i]
         {
             get
             {
-                return values[i];
+                return new ComplexNumber(values[i]);
             }
             set
             {
@@ -37,7 +29,6 @@ namespace MathLib.Objects
             values = null;
             dim = 0;
         }
-
         public ComplexVector(int dim)
         {
             this.dim = dim;
@@ -47,40 +38,40 @@ namespace MathLib.Objects
                 values[i] = new ComplexNumber(0, 1);
             }
         }
-
-        public ComplexVector(ComplexNumber[] vector)
+        public ComplexVector(IEnumerable<ComplexNumber> vector)
         {
-            dim = vector.Length;
+            dim = vector.Count();
             values = new ComplexNumber[dim];
-            for (int i = 0; i < dim; i++)
+            int i = 0;
+            foreach(ComplexNumber complex in vector)
             {
-                values[i] = vector[i];
+                values[i] = complex;
+                i++;
             }
         }
-
         public ComplexVector(ComplexVector vector)
         {
-            dim = vector.Dim;
+            dim = vector.dim;
             values = new ComplexNumber[dim];
             for (int i = 0; i < dim; i++)
             {
                 values[i] = vector[i];
             }
         }
-
-        public ComplexVector(double[] reVector, double[] imVector)
+        public ComplexVector(IEnumerable<double> reVector, IEnumerable<double> imVector)
         {
-            dim = reVector.Length;
+            dim = reVector.Count();
             values = new ComplexNumber[dim];
-            for(int i = 0; i< dim; i++)
+            int i = 0;
+            foreach(var complex in reVector.Zip(imVector, Tuple.Create))
             {
-                values[i] = new ComplexNumber(reVector[i], imVector[i]);
+                values[i] = new ComplexNumber(complex.Item1, complex.Item2);
+                i++;
             }
         }
-
         public ComplexVector(Vector reVector, Vector imVector)
         {
-            dim = reVector.Dim;
+            dim = reVector.dim;
             values = new ComplexNumber[dim];
             for (int i = 0; i < dim; i++)
             {
@@ -113,7 +104,7 @@ namespace MathLib.Objects
             ComplexNumber[] outComplex = new ComplexNumber[dim - 1];
             for (int i = 0; i < dim; i++)
             {
-                if (i != id - 1)
+                if (i != id)
                 {
                     outComplex[i] = values[i];
                 }
@@ -126,7 +117,7 @@ namespace MathLib.Objects
             Vector outVector = new Vector(dim);
             for(int i = 0; i < dim; i++)
             {
-                outVector[i] = values[i].Re;
+                outVector[i] = values[i].re;
             }
             return outVector;
         }
@@ -136,12 +127,12 @@ namespace MathLib.Objects
             Vector outVector = new Vector(dim);
             for (int i = 0; i < dim; i++)
             {
-                outVector[i] = values[i].Im;
+                outVector[i] = values[i].im;
             }
             return outVector;
         }
 
-        public ComplexNumber Length()
+        public ComplexNumber Norm()
         {
             ComplexNumber tNumber = new ComplexNumber();
             for (int i = 0; i < dim; i++)
@@ -285,7 +276,6 @@ namespace MathLib.Objects
             }
             return outComplex;
         }
-
         public static ComplexVector operator *(ComplexVector vector, ComplexNumber complex)
         {
             ComplexNumber[] outComplex = new ComplexNumber[vector.dim];
@@ -295,7 +285,6 @@ namespace MathLib.Objects
             }
             return new ComplexVector(outComplex);
         }
-
         public static ComplexVector operator *(ComplexNumber complex, ComplexVector vector)
         {
             ComplexNumber[] outComplex = new ComplexNumber[vector.dim];
@@ -305,7 +294,6 @@ namespace MathLib.Objects
             }
             return new ComplexVector(outComplex);
         }
-
         public static ComplexVector operator *(int value, ComplexVector vector)
         {
             ComplexNumber[] outComplex = new ComplexNumber[vector.dim];
@@ -315,7 +303,6 @@ namespace MathLib.Objects
             }
             return new ComplexVector(outComplex);
         }
-
         public static ComplexVector operator *(ComplexVector vector, int value)
         {
             ComplexNumber[] outComplex = new ComplexNumber[vector.dim];

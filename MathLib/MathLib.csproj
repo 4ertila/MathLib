@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MathLib</RootNamespace>
     <AssemblyName>MathLib</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,6 +34,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\NumericalMethods\packages\System.ValueTuple.4.4.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,8 +46,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Boundary value problem\CollocationMethod.cs" />
+    <Compile Include="Boundary value problem\DifferenceMethod.cs" />
+    <Compile Include="Boundary value problem\GalerkinMethod.cs" />
+    <Compile Include="Boundary value problem\ShootingMethodForLinearSystem.cs" />
+    <Compile Include="Cauchy problem\AdamsMethod.cs" />
+    <Compile Include="Cauchy problem\RungeKuttaMethod.cs" />
+    <Compile Include="Cauchy problem\SecondOrderScheme.cs" />
     <Compile Include="Math objects\ComplexMatrix.cs" />
     <Compile Include="Math objects\ComplexVector.cs" />
+    <Compile Include="Math objects\Function.cs" />
+    <Compile Include="Math objects\MatrixFunction.cs" />
+    <Compile Include="Math objects\Polynomial.cs" />
+    <Compile Include="Math objects\VectorFunction.cs" />
     <Compile Include="Methods for nonlinear equations\BisectionMethod.cs" />
     <Compile Include="Methods for nonlinear equations\CombinedMethod.cs" />
     <Compile Include="Methods for nonlinear equations\SimpleIterationMethodcs.cs" />
@@ -60,9 +76,14 @@
     <Compile Include="Methods for SLE\SimpleIterationMethod.cs" />
     <Compile Include="Methods for SLE\SweepMethod.cs" />
     <Compile Include="Optimization methods\KnapsackProblem.cs" />
-    <Compile Include="Optimization methods\TSP.cs" />
-    <Compile Include="Аpproximation\Numerical differentiation\InterpolationMethod.cs" />
-    <Compile Include="Аpproximation\Numerical differentiation\SplineInterpolation.cs" />
+    <Compile Include="Integration\GaussQuadratureFormulas.cs" />
+    <Compile Include="Integration\InterpolationMethod.cs" />
+    <Compile Include="Integration\RectangleMethods.cs" />
+    <Compile Include="Integration\SimpsonsRule.cs" />
+    <Compile Include="Integration\SplineInterpolation.cs" />
+    <Compile Include="Integration\TrapeziumMethod.cs" />
+    <Compile Include="Numerical differentiation\InterpolationMethod.cs" />
+    <Compile Include="Numerical differentiation\SplineInterpolation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Math objects\RationalMatrix.cs" />
     <Compile Include="Math objects\RationalNumber.cs" />
@@ -70,7 +91,6 @@
     <Compile Include="Methods for SLE\SquareRootMethod.cs" />
     <Compile Include="Math objects\Vector.cs" />
     <Compile Include="Methods for nonlinear equations\SecantMethod.cs" />
-    <Compile Include="Аpproximation\Approximation.cs" />
     <Compile Include="Аpproximation\HermitianPolynomial .cs" />
     <Compile Include="Аpproximation\LagrangePolynomial.cs" />
     <Compile Include="Аpproximation\LeastSquareMethod.cs" />
@@ -78,8 +98,7 @@
     <Compile Include="Аpproximation\SplineInterpolation.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Plans.txt" />
+    <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

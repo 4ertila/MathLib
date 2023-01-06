@@ -11,7 +11,7 @@ namespace MathLib.SolvingLinearSystem
     {
         public static Vector Solve(Matrix A, Vector r)
         {
-            int n = A.Rows;
+            int n = A.rows;
             double[] c = new double[n];
             double[] b = new double[n];
             double[] d = new double[n];

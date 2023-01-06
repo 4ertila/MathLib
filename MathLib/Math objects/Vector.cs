@@ -1,24 +1,17 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Math;
 
-namespace MathLib.Objects
+namespace MathLib.Objects 
 {
     public class Vector
     {
         private double[] values;
-        private int dim = 0;
-
-        public int Dim
-        {
-            get
-            {
-                return dim;
-            }
-        }
+        public int dim { private set; get; } = 0;
 
         public double this[int i]
         {
@@ -32,12 +25,21 @@ namespace MathLib.Objects
             }
         }
 
+        public IEnumerator GetEnumerator() => values.GetEnumerator();
+
+        public double[] Values
+        {
+            get
+            {
+                return (double[])values.Clone();
+            }
+        }
+
         public Vector()
         {
             values = null;
             dim = 0;
         }
-
         public Vector(int dim)
         {
             this.dim = dim;
@@ -47,30 +49,31 @@ namespace MathLib.Objects
                 values[i] = 0;
             }
         }
-
-        public Vector(double[] values)
+        public Vector(IEnumerable<double> values)
+        {
+            dim = values.Count();
+            this.values = new double[dim];
+            int i = 0;
+            foreach(double value in values)
+            {
+                this.values[i] = value;
+                i++;
+            }
+        }
+        public Vector(params double[] values)
         {
             dim = values.Length;
             this.values = new double[dim];
-            for (int i = 0; i < dim; i++)
+            int i = 0;
+            foreach (double value in values)
             {
-                this.values[i] = values[i];
+                this.values[i] = value;
+                i++;
             }
         }
-
-        public Vector(List<double> values)
-        {
-            dim = values.Count;
-            this.values = new double[dim];
-            for (int i = 0; i < dim; i++)
-            {
-                this.values[i] = values[i];
-            }
-        }
-
         public Vector(Vector vector)
         {
-            dim = vector.Dim;
+            dim = vector.dim;
             values = new double[dim];
             for (int i = 0; i < dim; i++)
             {
@@ -78,10 +81,21 @@ namespace MathLib.Objects
             }
         }
 
+        public void CopyTo(Vector destinationVector, int index)
+        {
+            values.CopyTo(destinationVector.values, index);
+        }
+
         public double[] ToArray()
         {
             double[] result = new double[dim];
             values.CopyTo(result, 0);
+            return result;
+        }
+
+        public List<double> ToList()
+        {
+            List<double> result = new List<double>(values);
             return result;
         }
 
@@ -92,11 +106,33 @@ namespace MathLib.Objects
 
         public void Init(Vector vector)
         {
-            dim = vector.Dim;
+            dim = vector.dim;
             values = new double[dim];
             for(int i =0; i < dim; i++)
             {
                 values[i] = vector[i];
+            }
+        }
+        public void Init(IEnumerable<double> values)
+        {
+            dim = values.Count();
+            this.values = new double[dim];
+            int i = 0;
+            foreach (double value in values)
+            {
+                this.values[i] = value;
+                i++;
+            }
+        }
+        public void Init(params double[] values)
+        {
+            dim = values.Length;
+            this.values = new double[dim];
+            int i = 0;
+            foreach (double value in values)
+            {
+                this.values[i] = value;
+                i++;
             }
         }
 
@@ -105,7 +141,7 @@ namespace MathLib.Objects
             double[] outVector = new double[dim + 1];
             for (int i = 0, k = 0; i < dim + 1; i++)
             {
-                if (i != newVectorId - 1)
+                if (i != newVectorId)
                 {
                     outVector[i] = values[k];
                     k++;
@@ -120,7 +156,7 @@ namespace MathLib.Objects
             return new Vector(outVector);
         }
 
-        public Vector DeleteElement()
+        public Vector RemoveElement()
         {
             double[] outDouble = new double[dim - 1];
             for (int i = 0; i < dim - 1; i++)
@@ -129,15 +165,15 @@ namespace MathLib.Objects
             }
             return new Vector(outDouble);
         }
-
-        public Vector DeleteElement(int id)
+        public Vector RemoveElement(int id)
         {
             double[] outDouble = new double[dim - 1];
-            for (int i = 0; i < dim; i++)
+            for (int i = 0, k = 0; i < dim; i++)
             {
-                if (i != id - 1)
+                if (i != id)
                 {
-                    outDouble[i] = values[i];
+                    outDouble[k] = values[i];
+                    k++;
                 }
             }
             return new Vector(outDouble);
@@ -153,27 +189,31 @@ namespace MathLib.Objects
             return Sqrt(norm);
         }
 
-        public double Min()
+        public double Min(out int id)
         {
             double min = double.MaxValue;
+            id = -1;
             for (int i = 0; i < dim; i++)
             {
                 if (values[i] < min)
                 {
                     min = values[i];
+                    id = i;
                 }
             }
             return min;
         }
 
-        public double Max()
+        public double Max(out int id)
         {
             double max = double.MinValue;
+            id = -1;
             for (int i = 0; i < dim; i++)
             {
                 if (values[i] > max)
                 {
                     max = values[i];
+                    id = i;
                 }
             }
             return max;
@@ -195,7 +235,7 @@ namespace MathLib.Objects
         public double Sum()
         {
             double result = 0;
-            for(int i =0; i< dim; i++)
+            for(int i = 0; i< dim; i++)
             {
                 result += values[i];
             }
@@ -336,11 +376,6 @@ namespace MathLib.Objects
             }
         }
 
-        public override int GetHashCode()
-        {
-            return 0;
-        }
-
         public static Vector operator +(Vector vector1, Vector vector2)
         {
             if (vector1.dim == vector2.dim)
@@ -375,16 +410,6 @@ namespace MathLib.Objects
             }
         }
 
-        public static double operator *(Vector vector1, Vector vector2)
-        {
-            double outDouble = 0;
-            for (int i = 0; i < vector1.dim; i++)
-            {
-                outDouble += vector1[i] * vector2[i];
-            }
-            return outDouble;
-        }
-
         public static Vector operator *(Vector vector1, double r)
         {
             double[] outDouble = new double[vector1.dim];
@@ -394,7 +419,6 @@ namespace MathLib.Objects
             }
             return new Vector(outDouble);
         }
-
         public static Vector operator *(double r, Vector vector1)
         {
             double[] outDouble = new double[vector1.dim];
@@ -403,6 +427,96 @@ namespace MathLib.Objects
                 outDouble[i] = vector1[i] * r;
             }
             return new Vector(outDouble);
+        }
+
+        public static bool operator <=(Vector vector1, Vector vector2)
+        {
+            if (vector1 is null || vector2 is null)
+            {
+                throw new ArgumentException("One of vectors is null");
+            }
+            else
+            {
+                if (vector1.dim != vector2.dim)
+                {
+                    return false;
+                }
+                for (int i = 0; i < vector1.dim; i++)
+                {
+                    if (vector1[i] > vector2[i])
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        public static bool operator <(Vector vector1, Vector vector2)
+        {
+            if (vector1 is null || vector2 is null)
+            {
+                throw new ArgumentException("One of vectors is null");
+            }
+            else
+            {
+                if (vector1.dim != vector2.dim)
+                {
+                    return false;
+                }
+                for (int i = 0; i < vector1.dim; i++)
+                {
+                    if (vector1[i] >= vector2[i])
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
+        public static bool operator >=(Vector vector1, Vector vector2)
+        {
+            if (vector1 is null || vector2 is null)
+            {
+                throw new ArgumentException("One of vectors is null");
+            }
+            else
+            {
+                if (vector1.dim != vector2.dim)
+                {
+                    return false;
+                }
+                for (int i = 0; i < vector1.dim; i++)
+                {
+                    if (vector1[i] < vector2[i])
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        public static bool operator >(Vector vector1, Vector vector2)
+        {
+            if (vector1 is null || vector2 is null)
+            {
+                throw new ArgumentException("One of vectors is null");
+            }
+            else
+            {
+                if (vector1.dim != vector2.dim)
+                {
+                    return false;
+                }
+                for (int i = 0; i < vector1.dim; i++)
+                {
+                    if (vector1[i] <= vector2[i])
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
         }
 
         public static bool operator ==(Vector vector1, Vector vector2)
