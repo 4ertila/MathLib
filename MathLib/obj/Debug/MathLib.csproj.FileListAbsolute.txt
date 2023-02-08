@@ -7,3 +7,9 @@ D:\C#\MathLib\bin\Debug\System.ValueTuple.dll
 D:\C#\MathLib\bin\Debug\System.ValueTuple.xml
 D:\C#\MathLib\obj\Debug\MathLib.csproj.CopyComplete
 D:\C#\MathLib\obj\Debug\MathLib.csproj.AssemblyReference.cache
+D:\github\MathLib\MathLib\bin\Debug\MathLib.dll
+D:\github\MathLib\MathLib\bin\Debug\MathLib.pdb
+D:\github\MathLib\MathLib\obj\Debug\MathLib.csproj.AssemblyReference.cache
+D:\github\MathLib\MathLib\obj\Debug\MathLib.csproj.CoreCompileInputs.cache
+D:\github\MathLib\MathLib\obj\Debug\MathLib.dll
+D:\github\MathLib\MathLib\obj\Debug\MathLib.pdb

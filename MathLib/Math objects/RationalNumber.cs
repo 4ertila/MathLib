@@ -26,7 +26,7 @@ namespace MathLib.Objects
             else if (n < 0)
             {
                 this.m *= -1;
-                this.n *= -1;
+                this.n = n;
             }
             Reduction();
         }
