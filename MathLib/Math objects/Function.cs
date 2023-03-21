@@ -555,7 +555,7 @@ namespace MathLib.Objects
                     }
                 }
 
-                else if(infix[pos] >= 'a' && infix[pos] <= 'z')
+                else if(infix[pos] >= 'a' && infix[pos] <= 'z' || infix[pos] >= 'A' && infix[pos] <= 'Z')
                 {
                     tStr = "";
                     while(pos < infix.Length && !standartOperators.Contains(infix[pos].ToString()) && infix[pos] != ' ')
